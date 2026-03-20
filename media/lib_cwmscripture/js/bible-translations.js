@@ -15,7 +15,7 @@
      * @since    10.1.0
      */
 
-    document.addEventListener('DOMContentLoaded', () => {
+    const init = () => {
         const config = document.getElementById('bible-translations-config');
 
         if (!config) {
@@ -1322,6 +1322,14 @@
             });
             observer.observe(scripturePane, { attributes: true, attributeFilter: ['active'] });
         }
-    });
+    };
+
+    // Run immediately if DOM is already ready (scripts loaded via inline <script defer> in body),
+    // otherwise wait for DOMContentLoaded (scripts loaded via WebAssetManager in <head>)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 
 })();
