@@ -1297,22 +1297,27 @@
             loadTranslations();
         }
 
+        // Detect the scripture tab pane — different ID in Proclaim admin vs plugin page
+        const scripturePane = document.getElementById('scripture')
+            || document.getElementById('attrib-translations');
+
         // 1. joomla.tab.shown — catches user clicks and Joomla tab recall events.
         document.addEventListener('joomla.tab.shown', (e) => {
-            if (e.target.getAttribute('aria-controls') === 'scripture') initScriptureTab();
+            const controls = e.target.getAttribute('aria-controls') || '';
+            if (controls === 'scripture' || controls === 'attrib-translations') {
+                initScriptureTab();
+            }
         });
 
         // 2. setTimeout(0) — catches recalls that fire during DOMContentLoaded
         //    before our joomla.tab.shown listener was registered.
         setTimeout(() => {
-            if (!scriptureInitDone && document.getElementById('scripture')?.hasAttribute('active')) {
+            if (!scriptureInitDone && scripturePane?.hasAttribute('active')) {
                 initScriptureTab();
             }
         }, 0);
 
         // 3. MutationObserver — belt-and-suspenders for late active attribute changes.
-        const scripturePane = document.getElementById('scripture');
-
         if (scripturePane) {
             const observer = new MutationObserver(() => {
                 if (!scriptureInitDone && scripturePane.hasAttribute('active')) {
