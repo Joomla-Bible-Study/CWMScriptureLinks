@@ -1020,16 +1020,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
 
         $queryRef = str_replace(' ', '+', $formattedRef);
 
-        if ($display === 'link') {
-            return '<a href="https://www.biblegateway.com/passage/?search='
-                . urlencode($formattedRef)
-                . '&version=' . urlencode(strtoupper($version))
-                . '" target="_blank" rel="noopener noreferrer" class="scripture-link">'
-                . htmlspecialchars($referenceText)
-                . '</a>';
-        }
-
-        // For passage display modes, fetch the actual text
+        // Fetch the passage text from a provider
         $providerParams = new Registry([
             'provider_getbible'  => $this->params->get('provider_getbible', 1),
             'provider_api_bible' => $this->params->get('provider_api_bible', 0),
@@ -1055,13 +1046,10 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             Log::add('ScriptureLinks: Error fetching "' . $referenceText . '": ' . $e->getMessage(), Log::ERROR, 'cwmscripture.bible');
         }
 
-        // Fallback: return as a BibleGateway link
-        return '<a href="https://www.biblegateway.com/passage/?search='
-            . urlencode($formattedRef)
-            . '&version=' . urlencode(strtoupper($version))
-            . '" target="_blank" rel="noopener noreferrer" class="scripture-link">'
+        // Fallback: return the reference as styled plain text
+        return '<span class="scripture-ref scripture-unavailable">'
             . htmlspecialchars($referenceText)
-            . '</a>';
+            . '</span>';
     }
 
     /**

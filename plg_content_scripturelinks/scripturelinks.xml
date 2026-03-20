@@ -34,10 +34,9 @@
                     <option value="auto">PLG_CONTENT_SCRIPTURELINKS_MODE_AUTO</option>
                 </field>
 
-                <field name="display" type="list" default="link"
+                <field name="display" type="list" default="inline"
                        label="PLG_CONTENT_SCRIPTURELINKS_DISPLAY_LABEL"
                        description="PLG_CONTENT_SCRIPTURELINKS_DISPLAY_DESC">
-                    <option value="link">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_LINK</option>
                     <option value="tooltip">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_TOOLTIP</option>
                     <option value="inline">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_INLINE</option>
                     <option value="popup">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_POPUP</option>
