@@ -116,6 +116,35 @@ class ScriptureParamsHelper
         $db->setQuery($query);
         $db->execute();
 
+        // Sync gdpr_mode to Proclaim's component params if installed.
+        // Proclaim keeps its own copy for analytics/privacy beyond scripture.
+        try {
+            $gdprMode = $params->get('gdpr_mode');
+
+            if ($gdprMode !== null) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('params'))
+                    ->from($db->quoteName('#__bsms_admin'))
+                    ->where($db->quoteName('id') . ' = 1');
+                $db->setQuery($query);
+                $adminJson = $db->loadResult();
+
+                if ($adminJson !== null) {
+                    $adminParams = new Registry($adminJson);
+                    $adminParams->set('gdpr_mode', $gdprMode);
+
+                    $query = $db->getQuery(true)
+                        ->update($db->quoteName('#__bsms_admin'))
+                        ->set($db->quoteName('params') . ' = ' . $db->quote($adminParams->toString()))
+                        ->where($db->quoteName('id') . ' = 1');
+                    $db->setQuery($query);
+                    $db->execute();
+                }
+            }
+        } catch (\Exception $e) {
+            // Proclaim not installed — skip sync
+        }
+
         // Invalidate cache so next getParams() reads fresh data
         self::$cache = null;
     }
