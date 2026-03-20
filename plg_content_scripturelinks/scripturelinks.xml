@@ -24,7 +24,9 @@
 
     <config>
         <fields name="params">
-            <fieldset name="basic">
+            <fieldset name="basic"
+                      label="PLG_CONTENT_SCRIPTURELINKS_TAB_SETTINGS"
+                      description="PLG_CONTENT_SCRIPTURELINKS_TAB_SETTINGS_DESC">
                 <field name="mode" type="list" default="tag"
                        label="PLG_CONTENT_SCRIPTURELINKS_MODE_LABEL"
                        description="PLG_CONTENT_SCRIPTURELINKS_MODE_DESC">
@@ -79,6 +81,16 @@
                        label="PLG_CONTENT_SCRIPTURELINKS_CACHE_LABEL"
                        description="PLG_CONTENT_SCRIPTURELINKS_CACHE_DESC"
                        min="1" max="365" />
+            </fieldset>
+
+            <fieldset name="translations"
+                      label="PLG_CONTENT_SCRIPTURELINKS_TAB_TRANSLATIONS"
+                      description="PLG_CONTENT_SCRIPTURELINKS_TAB_TRANSLATIONS_DESC"
+                      addfieldprefix="CWM\Plugin\Content\ScriptureLinks\Field">
+                <field name="translations_manager"
+                       type="translationsmanager"
+                       label="PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_DESC" />
             </fieldset>
         </fields>
     </config>

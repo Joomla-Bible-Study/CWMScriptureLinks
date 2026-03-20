@@ -14,8 +14,10 @@ namespace CWM\Plugin\Content\ScriptureLinks\Extension;
 use CWM\Library\Scripture\Bible\AbstractBibleProvider;
 use CWM\Library\Scripture\Bible\BibleProviderFactory;
 use CWM\Library\Scripture\Helper\ScriptureHelper;
+use CWM\Library\Scripture\Importer\BibleImporter;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Session\Session;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Registry\Registry;
 
@@ -43,7 +45,8 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'onContentPrepare' => 'onContentPrepare',
+            'onContentPrepare'      => 'onContentPrepare',
+            'onAjaxScripturelinks'  => 'onAjaxScripturelinks',
         ];
     }
 
@@ -92,6 +95,107 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         if ($mode === 'auto') {
             $row->text = $this->processAutoDetect($row->text);
         }
+    }
+
+    /**
+     * Handle AJAX requests for Bible translation management.
+     *
+     * Called via com_ajax: index.php?option=com_ajax&group=content&plugin=scripturelinks&format=json
+     *
+     * @param   \Joomla\Event\Event  $event  The event object
+     *
+     * @return  void
+     *
+     * @since   1.0.0
+     */
+    public function onAjaxScripturelinks(\Joomla\Event\Event $event): void
+    {
+        Session::checkToken('post') || throw new \RuntimeException('Invalid token', 403);
+
+        $app    = $this->getApplication();
+        $input  = $app->getInput();
+        $action = $input->getCmd('action', '');
+        $abbr   = $input->getCmd('abbreviation', '');
+
+        if (empty($abbr)) {
+            throw new \RuntimeException('Missing translation abbreviation', 400);
+        }
+
+        AbstractBibleProvider::registerLogger();
+
+        $result = match ($action) {
+            'download' => $this->handleDownload($abbr, false),
+            'refresh'  => $this->handleDownload($abbr, true),
+            'remove'   => $this->handleRemove($abbr),
+            default    => throw new \RuntimeException('Unknown action: ' . $action, 400),
+        };
+
+        $event->addResult($result);
+    }
+
+    /**
+     * Handle download/refresh of a Bible translation.
+     *
+     * @param   string  $abbreviation  Translation abbreviation
+     * @param   bool    $force         Force re-download
+     *
+     * @return  array  Result data for JSON response
+     *
+     * @since   1.0.0
+     */
+    private function handleDownload(string $abbreviation, bool $force): array
+    {
+        $count = BibleImporter::downloadAndImport($abbreviation, $force);
+
+        if ($count < 0) {
+            throw new \RuntimeException(
+                \sprintf('Failed to download translation "%s". Check the log file for details.', strtoupper($abbreviation)),
+                500
+            );
+        }
+
+        $db    = \Joomla\CMS\Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['installed', 'verse_count', 'data_size']))
+            ->from($db->quoteName('#__bsms_bible_translations'))
+            ->where($db->quoteName('abbreviation') . ' = :abbr')
+            ->bind(':abbr', $abbreviation);
+        $db->setQuery($query);
+        $row = $db->loadObject();
+
+        return [
+            'abbreviation' => $abbreviation,
+            'installed'    => (int) ($row->installed ?? 1),
+            'verse_count'  => (int) ($row->verse_count ?? $count),
+            'data_size'    => (int) ($row->data_size ?? 0),
+            'message'      => \sprintf(
+                '%s: %s verses downloaded successfully.',
+                strtoupper($abbreviation),
+                number_format($count)
+            ),
+        ];
+    }
+
+    /**
+     * Handle removal of a Bible translation.
+     *
+     * @param   string  $abbreviation  Translation abbreviation
+     *
+     * @return  array  Result data for JSON response
+     *
+     * @since   1.0.0
+     */
+    private function handleRemove(string $abbreviation): array
+    {
+        BibleImporter::removeTranslation($abbreviation);
+
+        return [
+            'abbreviation' => $abbreviation,
+            'installed'    => 0,
+            'verse_count'  => 0,
+            'data_size'    => 0,
+            'message'      => \sprintf('%s: translation removed.', strtoupper($abbreviation)),
+        ];
     }
 
     /**

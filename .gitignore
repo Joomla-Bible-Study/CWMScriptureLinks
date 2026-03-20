@@ -1,18 +1,38 @@
+# IDE & System Related Files
+.buildpath
+.project
+.settings
+.DS_Store
+.idea
+.vscode
+
+# AI tooling
+.ai/
+
 # Dependencies
 /vendor/
+node_modules/
+composer.phar
 
-# Build output
-/build/dist/
+# Build outputs
+*.zip
+bin/
+out/
 
-# IDE
-/.idea/
-/.vscode/
-*.swp
-*.swo
+# Build reports
+build/reports/
 
-# OS
-.DS_Store
+# Test cache
+.phpunit.cache/
+
+# OSX
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
 Thumbs.db
+Desktop.ini
 
-# PHPUnit
-/.phpunit.cache/
+# Claude Code worktrees
+.claude/worktrees/

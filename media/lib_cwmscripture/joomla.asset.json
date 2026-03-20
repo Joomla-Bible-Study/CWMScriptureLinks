@@ -35,6 +35,19 @@
       "dependencies": [
         "core"
       ]
+    },
+    {
+      "name": "lib_cwmscripture.translations-manager",
+      "type": "style",
+      "uri": "lib_cwmscripture/css/translations-manager.css"
+    },
+    {
+      "name": "lib_cwmscripture.translations-manager",
+      "type": "script",
+      "uri": "lib_cwmscripture/js/translations-manager.js",
+      "dependencies": [
+        "core"
+      ]
     }
   ]
 }

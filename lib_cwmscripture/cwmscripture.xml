@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="library" method="upgrade">
+<extension version="4.0" type="library" method="upgrade">
     <name>lib_cwmscripture</name>
-    <libraryname>cwmscripture</libraryname>
+	<description>LIB_CWMSCRIPTURE_DESCRIPTION</description>
+	<version>1.0.0</version>
+	<creationDate>March 2026</creationDate>
     <author>CWM Team</author>
-    <creationDate>2026-03</creationDate>
-    <copyright>(C) 2026 CWM Team All rights reserved</copyright>
-    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>support@christianwebministries.org</authorEmail>
     <authorUrl>https://www.christianwebministries.org</authorUrl>
-    <version>1.0.0</version>
-    <description>LIB_CWMSCRIPTURE_DESCRIPTION</description>
+	<copyright>Copyright © 2026 CWM Team All rights reserved</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<libraryname>cwmscripture</libraryname>
     <namespace path="src">CWM\Library\Scripture</namespace>
 
     <files folder="lib_cwmscripture">
