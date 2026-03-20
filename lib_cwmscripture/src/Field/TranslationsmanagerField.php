@@ -69,23 +69,8 @@ class TranslationsmanagerField extends FormField
         // Inject CSS/JS inline — WebAssetManager doesn't work for form fields
         // rendered after <head> is already output
         $html = '<link rel="stylesheet" href="' . $esc($mediaBase . '/css/translations-manager.css') . '" />';
-
-        // Pass config via Joomla.getOptions (the script reads it on load)
-        try {
-            Factory::getApplication()->getDocument()->addScriptOptions('cwmscripture.manager', [
-                'ajaxUrl' => $ajaxUrl,
-                'token'   => $token,
-            ]);
-        } catch (\Throwable $e) {
-            // Fallback: inject options directly
-            $html .= '<script>document.addEventListener("DOMContentLoaded", function(){'
-                . 'Joomla.optionsStorage = Joomla.optionsStorage || {};'
-                . 'Joomla.optionsStorage["cwmscripture.manager"] = '
-                . json_encode(['ajaxUrl' => $ajaxUrl, 'token' => $token], JSON_THROW_ON_ERROR)
-                . ';});</script>';
-        }
-
-        $html .= '<script src="' . $esc($mediaBase . '/js/translations-manager.js') . '" defer></script>';
+        $html .= '<script src="' . $esc($mediaBase . '/js/cwm-fetch.js') . '" defer></script>';
+        $html .= '<script src="' . $esc($mediaBase . '/js/bible-translations.js') . '" defer></script>';
 
         // ── Provider & Settings panels (two-column) ──
         $html .= '<div class="row" id="scripture-settings">';
@@ -319,127 +304,101 @@ class TranslationsmanagerField extends FormField
      */
     private function renderTranslationsTable(string $token, int $gdprMode): string
     {
-        $db  = Factory::getContainer()->get(DatabaseInterface::class);
-        $esc = static fn (string $s): string => htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
+        $esc      = static fn (string $s): string => htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
+        $adminLang = 'en-GB';
 
         try {
-            $query = $db->getQuery(true)
-                ->select('*')
-                ->from($db->quoteName('#__bsms_bible_translations'))
-                ->order($db->quoteName('language') . ' ASC, ' . $db->quoteName('name') . ' ASC');
-            $db->setQuery($query);
-            $translations = $db->loadObjectList();
+            $adminLang = Factory::getApplication()->getLanguage()->getTag();
         } catch (\Throwable) {
-            return '<div class="alert alert-warning">'
-                . Text::_('PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_TABLE_MISSING')
-                . '</div>';
         }
 
-        $installedCount = 0;
-
-        foreach ($translations as $t) {
-            if ((int) ($t->installed ?? 0) === 1) {
-                $installedCount++;
-            }
-        }
-
+        // Same HTML structure as Proclaim's admin/tmpl/cwmadmin/edit.php Scripture tab
         $html = '<div class="row"><div class="col-12"><div class="cwmadmin-panel mb-4">';
 
-        // Header
+        // Header with title and action buttons
         $html .= '<div class="d-flex justify-content-between align-items-center mb-3">';
-        $html .= '<h3 class="tab-description mb-0">'
-            . Text::_('PLG_CONTENT_SCRIPTURELINKS_LOCAL_TRANSLATIONS');
+        $html .= '<h3 class="tab-description mb-0" id="translations-card-header">'
+            . Text::_('PLG_CONTENT_SCRIPTURELINKS_LOCAL_TRANSLATIONS') . '</h3>';
+        $html .= '<div class="btn-group btn-group-sm">';
+        $html .= '<button type="button" class="btn btn-primary d-none" id="btn-update-all-translations">'
+            . '<i class="icon-download" aria-hidden="true"></i> Update All</button>';
+        $html .= '<button type="button" class="btn btn-danger d-none" id="btn-remove-all-translations">'
+            . '<i class="icon-trash" aria-hidden="true"></i> Remove All</button>';
+        $html .= '<button type="button" class="btn btn-outline-secondary" id="btn-refresh-translations">'
+            . '<i class="icon-refresh" aria-hidden="true"></i></button>';
+        $html .= '</div></div>';
 
-        if ($installedCount > 0) {
-            $html .= ' <span class="badge bg-success ms-2"><i class="icon-checkmark-circle" aria-hidden="true"></i> '
-                . $installedCount . ' ' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_INSTALLED') . '</span>';
-        }
-
-        $html .= '</h3></div>';
         $html .= '<p class="text-muted">' . Text::_('PLG_CONTENT_SCRIPTURELINKS_LOCAL_TRANSLATIONS_DESC') . '</p>';
 
-        // Status message area for JS
-        $html .= '<div id="cwm-tm-status" class="alert" style="display:none;"></div>';
-
-        if (empty($translations)) {
-            $html .= '<div class="alert alert-info">'
-                . Text::_('PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_NONE') . '</div>';
-        } else {
-            $html .= '<table class="table table-striped" id="cwm-translations-table">';
-            $html .= '<thead><tr>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_NAME') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_ABBREVIATION') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_LANGUAGE') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_SOURCE') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_STATUS') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_VERSES') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_SIZE') . '</th>';
-            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_ACTIONS') . '</th>';
-            $html .= '</tr></thead><tbody>';
-
-            foreach ($translations as $t) {
-                $installed  = (int) ($t->installed ?? 0) === 1;
-                $statusCls  = $installed ? 'badge bg-success' : 'badge bg-secondary';
-                $statusTxt  = $installed
-                    ? Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_INSTALLED')
-                    : Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_AVAILABLE');
-
-                $sizeDisplay = $installed && ($t->data_size ?? 0) > 0
-                    ? $this->formatBytes((int) $t->data_size)
-                    : (($t->estimated_size ?? 0) > 0 ? '~' . $this->formatBytes((int) $t->estimated_size) : '—');
-
-                $verseDisplay = $installed && ($t->verse_count ?? 0) > 0
-                    ? number_format((int) $t->verse_count) : '—';
-
-                $rowId = 'cwm-tm-row-' . $esc($t->abbreviation);
-
-                $html .= '<tr id="' . $rowId . '" data-abbreviation="' . $esc($t->abbreviation) . '">';
-                $html .= '<td><strong>' . $esc($t->name) . '</strong>';
-
-                if (!empty($t->downloaded_at)) {
-                    $html .= '<br><small class="text-muted">'
-                        . Text::sprintf('PLG_CONTENT_SCRIPTURELINKS_TM_DOWNLOADED_AT', $esc($t->downloaded_at))
-                        . '</small>';
-                }
-
-                $html .= '</td>';
-                $html .= '<td><code>' . $esc(strtoupper($t->abbreviation)) . '</code></td>';
-                $html .= '<td>' . $esc(strtoupper($t->language ?? '')) . '</td>';
-                $html .= '<td>' . $esc($t->source ?? '') . '</td>';
-                $html .= '<td><span class="cwm-tm-status-badge ' . $statusCls . '">' . $statusTxt . '</span></td>';
-                $html .= '<td class="cwm-tm-verses">' . $verseDisplay . '</td>';
-                $html .= '<td class="cwm-tm-size">' . $sizeDisplay . '</td>';
-                $html .= '<td class="cwm-tm-actions">';
-
-                if ($installed) {
-                    $html .= '<button type="button" class="btn btn-sm btn-outline-primary cwm-tm-btn-refresh" '
-                        . 'data-abbreviation="' . $esc($t->abbreviation) . '">'
-                        . '<span class="icon-loop" aria-hidden="true"></span> '
-                        . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REFRESH')
-                        . '</button> ';
-
-                    if (!\in_array(strtolower($t->abbreviation), ['kjv', 'web'], true)) {
-                        $html .= '<button type="button" class="btn btn-sm btn-outline-danger cwm-tm-btn-remove" '
-                            . 'data-abbreviation="' . $esc($t->abbreviation) . '">'
-                            . '<span class="icon-trash" aria-hidden="true"></span> '
-                            . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REMOVE')
-                            . '</button>';
-                    }
-                } else {
-                    $html .= '<button type="button" class="btn btn-sm btn-success cwm-tm-btn-download" '
-                        . 'data-abbreviation="' . $esc($t->abbreviation) . '">'
-                        . '<span class="icon-download" aria-hidden="true"></span> '
-                        . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_DOWNLOAD')
-                        . '</button>';
-                }
-
-                $html .= '</td></tr>';
-            }
-
-            $html .= '</tbody></table>';
-        }
+        // Translations list container — populated by bible-translations.js
+        $html .= '<div id="translations-list">';
+        $html .= '<div class="text-center py-3">'
+            . '<span class="spinner-border spinner-border-sm" role="status"></span> Loading...</div>';
+        $html .= '</div>';
 
         $html .= '</div></div></div>';
+
+        // Config div with all translated strings for bible-translations.js
+        // Uses the same element IDs and data-str-* attributes as Proclaim's template
+        $html .= '<div id="bible-translations-config" class="d-none"'
+            . ' data-gdpr-mode="' . $gdprMode . '"'
+            . ' data-token="' . $token . '"'
+            . ' data-str-loading="Loading..."'
+            . ' data-str-no-translations="No translations available."'
+            . ' data-str-load-error="Unknown"'
+            . ' data-str-title="Title"'
+            . ' data-str-abbreviation="Abbreviation"'
+            . ' data-str-source="Source"'
+            . ' data-str-status="Status"'
+            . ' data-str-verses="Verses"'
+            . ' data-str-installed="Installed"'
+            . ' data-str-not-installed="Not Installed"'
+            . ' data-str-download="Download"'
+            . ' data-str-downloading="Downloading..."'
+            . ' data-str-remove="Remove"'
+            . ' data-str-download-failed="Download failed"'
+            . ' data-str-confirm-remove="Are you sure you want to remove this translation?"'
+            . ' data-str-bundled-done="Bundled translations auto-downloaded"'
+            . ' data-str-status-ready="Ready"'
+            . ' data-str-status-installed="translations imported"'
+            . ' data-str-status-none="None installed"'
+            . ' data-str-status-unknown="Unknown"'
+            . ' data-str-remove-all="Remove All"'
+            . ' data-str-confirm-remove-all="Remove ALL installed translations? This cannot be undone."'
+            . ' data-str-size="Size"'
+            . ' data-str-total-size="Total Size"'
+            . ' data-str-syncing="Syncing..."'
+            . ' data-str-sync-complete="%s translations synced"'
+            . ' data-str-sync-failed="Sync failed"'
+            . ' data-str-gdpr-disabled="Online providers disabled (GDPR mode)"'
+            . ' data-str-online="Online"'
+            . ' data-str-language="Language"'
+            . ' data-str-all-languages="All Languages"'
+            . ' data-str-filter-all="All"'
+            . ' data-str-filter-installed="Installed"'
+            . ' data-str-filter-not-installed="Not Installed"'
+            . ' data-str-filter-in-use="In Use"'
+            . ' data-str-search-placeholder="Search by name or abbreviation..."'
+            . ' data-str-usage-count="Usage Count"'
+            . ' data-str-usage-badge="used in %s messages"'
+            . ' data-str-suggested="Suggested"'
+            . ' data-str-showing-count="Showing %s of %s translations"'
+            . ' data-admin-language="' . $esc($adminLang) . '"'
+            . ' data-str-core-translation="Core"'
+            . ' data-str-core-cannot-remove="Core translations cannot be removed"'
+            . ' data-str-suggested-desc="Suggested for your language"'
+            . ' data-str-online-only="Online Only"'
+            . ' data-str-online-only-desc="Available via online provider only"'
+            . ' data-str-provider-disable-confirm="Disable this provider? Non-installed catalog entries will be removed."'
+            . ' data-str-provider-cleanup-done="%s catalog entries removed"'
+            . ' data-str-bible-refresh="Refresh"'
+            . ' data-str-bible-refreshing="Refreshing..."'
+            . ' data-str-bible-update-all="Update All"'
+            . ' data-str-bible-update-all-desc="Re-download all installed translations"'
+            . ' data-str-bible-updating-all="Updating all..."'
+            . ' data-str-bible-update-all-complete="Updated %s, failed %s"'
+            . ' data-str-bible-downloaded-at="Downloaded: %s"'
+            . '></div>';
 
         return $html;
     }

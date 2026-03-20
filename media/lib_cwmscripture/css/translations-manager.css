@@ -1,23 +1,72 @@
 /**
- * CWM Scripture Library - Translations Manager Styles
+ * CWM Scripture Library - Scripture Tab Styles
+ *
+ * Panel layout, switcher overrides, and translations table styles.
+ * Supports both light and dark mode via CSS custom properties.
  */
 
+/* CSS custom properties with defaults (overridden by Proclaim's general.css if loaded) */
+:root {
+  --color-gray-dark: #536482;
+  --color-border: #ccc;
+  --color-background-light: #fafafa;
+  --color-accent: #7F9DB9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-gray-dark: #c0c0c0;
+    --color-border: #404040;
+    --color-background-light: #2d2d44;
+    --color-accent: #6eb5ff;
+  }
+}
+
+/* Joomla admin dark mode (Atum template) */
+[data-color-scheme="dark"],
+body.admin.com_plugins {
+  --color-gray-dark: #c0c0c0;
+  --color-border: #404040;
+  --color-background-light: #2d2d44;
+  --color-accent: #6eb5ff;
+}
+
+/* Panel container */
+.cwmadmin-panel {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 15px;
+  background-color: var(--color-background-light);
+}
+
+.cwmadmin-panel h3.tab-description {
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--color-accent);
+  color: var(--color-gray-dark);
+}
+
+/* Translations table */
 #cwm-translations-manager {
     margin-top: 0.5rem;
 }
 
-#cwm-translations-table th {
+#cwm-translations-table th,
+#translations-list th {
     white-space: nowrap;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
 
-#cwm-translations-table td {
+#cwm-translations-table td,
+#translations-list td {
     vertical-align: middle;
 }
 
-#cwm-translations-table code {
+#cwm-translations-table code,
+#translations-list code {
     font-size: 0.9em;
     padding: 0.15em 0.4em;
     background: rgba(0, 0, 0, 0.06);
