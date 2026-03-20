@@ -49,27 +49,10 @@ class TranslationsmanagerField extends FormField
      */
     protected function getInput(): string
     {
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerAndUseStyle(
-            'lib_cwmscripture.translations-manager',
-            'lib_cwmscripture/css/translations-manager.css'
-        );
-        $wa->registerAndUseScript(
-            'lib_cwmscripture.translations-manager',
-            'lib_cwmscripture/js/translations-manager.js',
-            [],
-            [],
-            ['core']
-        );
-
         $params = ScriptureParamsHelper::getParams();
         $token  = Session::getFormToken();
         $ajaxUrl = Uri::base() . 'index.php?option=com_ajax&group=content&plugin=scripturelinks&format=json';
-
-        Factory::getApplication()->getDocument()->addScriptOptions('cwmscripture.manager', [
-            'ajaxUrl' => $ajaxUrl,
-            'token'   => $token,
-        ]);
+        $mediaBase = Uri::root(true) . '/media/lib_cwmscripture';
 
         // Detect field name prefix from the form (e.g. "jform[params]")
         $prefix = $this->formControl ? $this->formControl . '[' . $this->group . ']' : 'jform[params]';
@@ -83,7 +66,26 @@ class TranslationsmanagerField extends FormField
 
         $esc = static fn (string $s): string => htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
 
-        $html = '';
+        // Inject CSS/JS inline — WebAssetManager doesn't work for form fields
+        // rendered after <head> is already output
+        $html = '<link rel="stylesheet" href="' . $esc($mediaBase . '/css/translations-manager.css') . '" />';
+
+        // Pass config via Joomla.getOptions (the script reads it on load)
+        try {
+            Factory::getApplication()->getDocument()->addScriptOptions('cwmscripture.manager', [
+                'ajaxUrl' => $ajaxUrl,
+                'token'   => $token,
+            ]);
+        } catch (\Throwable $e) {
+            // Fallback: inject options directly
+            $html .= '<script>document.addEventListener("DOMContentLoaded", function(){'
+                . 'Joomla.optionsStorage = Joomla.optionsStorage || {};'
+                . 'Joomla.optionsStorage["cwmscripture.manager"] = '
+                . json_encode(['ajaxUrl' => $ajaxUrl, 'token' => $token], JSON_THROW_ON_ERROR)
+                . ';});</script>';
+        }
+
+        $html .= '<script src="' . $esc($mediaBase . '/js/translations-manager.js') . '" defer></script>';
 
         // ── Provider & Settings panels (two-column) ──
         $html .= '<div class="row" id="scripture-settings">';
