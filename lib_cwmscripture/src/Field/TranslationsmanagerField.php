@@ -209,15 +209,6 @@ class TranslationsmanagerField extends FormField
         $html .= '<div class="form-text">' . Text::_('PLG_CONTENT_SCRIPTURELINKS_CACHE_DESC') . '</div>';
         $html .= '</div></div>';
 
-        // GDPR mode
-        $html .= self::renderSwitcher(
-            $fieldPrefix . '[gdpr_mode]',
-            'jform_params_gdpr_mode',
-            Text::_('PLG_CONTENT_SCRIPTURELINKS_GDPR_LABEL'),
-            Text::_('PLG_CONTENT_SCRIPTURELINKS_GDPR_DESC'),
-            $gdprMode
-        );
-
         $html .= '</div></div>'; // end panel, end right column
         $html .= '</div>'; // end row
 
