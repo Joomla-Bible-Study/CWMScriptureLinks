@@ -906,9 +906,11 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *
      * Supports:
      * - {scripture}John 3:16{/scripture}
-     * - {scripture kjv}John 3:16{/scripture}
+     * - {scripture kjv}John 3:16{/scripture}             (legacy shorthand)
      * - {bible}John 3:16{/bible}
-     * - {bible 9}John 3:16{/bible} (legacy numeric version)
+     * - {scripture version="kjv"}John 3:16{/scripture}   (attribute style)
+     * - {scripture display="tooltip"}John 3:16{/scripture}
+     * - {scripture version="nkjv" display="popup"}John 3:16{/scripture}
      *
      * @param   string  $text  Article content
      *
@@ -918,7 +920,9 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      */
     private function processTags(string $text): string
     {
-        $pattern = '#\{(?:bible|scripture)\s*([a-zA-Z0-9]*)\}(.+?)\{/(?:bible|scripture)\}#is';
+        // Match {scripture ...}...{/scripture} and {bible ...}...{/bible}
+        // Captures everything between the tag name and closing > as the attributes string
+        $pattern = '#\{(?:bible|scripture)((?:\s+[^}]*)?)\}(.+?)\{/(?:bible|scripture)\}#is';
 
         return preg_replace_callback($pattern, [$this, 'replaceTag'], $text);
     }
@@ -934,18 +938,62 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      */
     private function replaceTag(array $matches): string
     {
-        $versionOverride = trim($matches[1]);
-        $referenceText   = trim($matches[2]);
+        $attrString    = trim($matches[1]);
+        $referenceText = trim($matches[2]);
 
         if (empty($referenceText)) {
             return '';
         }
 
-        $version = !empty($versionOverride)
-            ? $versionOverride
-            : $this->params->get('default_version', 'kjv');
+        // Parse attributes — supports both legacy shorthand and attribute style
+        $version = $this->params->get('default_version', 'kjv');
+        $display = null; // null = use plugin default
 
-        return $this->buildScriptureLink($referenceText, $version);
+        if (!empty($attrString)) {
+            // Try attribute-style: version="kjv" display="tooltip"
+            $attrs = $this->parseTagAttributes($attrString);
+
+            if (!empty($attrs)) {
+                if (isset($attrs['version'])) {
+                    $version = $attrs['version'];
+                }
+
+                if (isset($attrs['display'])) {
+                    $display = $attrs['display'];
+                }
+            } else {
+                // Legacy shorthand: just a version abbreviation
+                $version = $attrString;
+            }
+        }
+
+        return $this->buildScriptureLink($referenceText, $version, $display);
+    }
+
+    /**
+     * Parse attribute-style parameters from a tag.
+     *
+     * Parses: version="kjv" display="tooltip"
+     * Returns: ['version' => 'kjv', 'display' => 'tooltip']
+     * Returns empty array if no attribute-style params found.
+     *
+     * @param   string  $attrString  Raw attribute string
+     *
+     * @return  array<string, string>
+     *
+     * @since  1.1.0
+     */
+    private function parseTagAttributes(string $attrString): array
+    {
+        $attrs = [];
+
+        if (preg_match_all('#(\w+)\s*=\s*"([^"]*)"#', $attrString, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $attrs[strtolower($match[1])] = $match[2];
+            }
+        }
+
+        return $attrs;
     }
 
     /**
@@ -998,9 +1046,9 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *
      * @since  1.0.0
      */
-    private function buildScriptureLink(string $referenceText, string $version): string
+    private function buildScriptureLink(string $referenceText, string $version, ?string $displayOverride = null): string
     {
-        $display = $this->params->get('display', 'link');
+        $display = $displayOverride ?? $this->params->get('display', 'inline');
 
         // Parse the reference to build the API query
         $ref = ScriptureHelper::parseReference($referenceText);
