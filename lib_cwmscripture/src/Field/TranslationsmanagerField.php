@@ -146,7 +146,8 @@ class TranslationsmanagerField extends FormField
             ? str_repeat("\u{2022}", 20) . substr($apiBibleKey, -4)
             : '';
 
-        $html .= '<div class="control-group">';
+        $apiKeyHidden = $providerApiBible ? '' : ' style="display:none;"';
+        $html .= '<div class="control-group" id="api-bible-key-group"' . $apiKeyHidden . '>';
         $html .= '<div class="control-label"><label for="jform_params_api_bible_api_key">'
             . Text::_('PLG_CONTENT_SCRIPTURELINKS_APIKEY_LABEL') . '</label></div>';
         $html .= '<div class="controls"><div class="input-group">';
@@ -305,15 +306,30 @@ class TranslationsmanagerField extends FormField
             . ' data-str-bible-downloaded-at="' . self::esc(Text::_('PLG_CONTENT_SCRIPTURELINKS_STR_BIBLE_DOWNLOADED_AT')) . '"'
             . '></div>';
 
-        // Inline JS for eye toggle
+        // Inline JS for eye toggle + API.Bible show/hide
         $html .= '<script>'
             . '(function(){'
+            // Eye toggle
             . 'var t=document.getElementById("jform_params_api_key_toggle");'
             . 'if(t){t.addEventListener("click",function(){'
             . 'var i=document.getElementById("jform_params_api_bible_api_key");'
             . 'var s=this.querySelector("span");'
             . 'if(i.type==="password"){i.type="text";s.className="icon-eye-close";}'
             . 'else{i.type="password";s.className="icon-eye";}});}'
+            // API.Bible provider toggle — show/hide key group + button rows
+            . 'var radios=document.querySelectorAll("input[name=\\"jform[params][provider_api_bible]\\"]");'
+            . 'var keyGrp=document.getElementById("api-bible-key-group");'
+            . 'var keyRow=document.getElementById("api-bible-key-row");'
+            . 'var syncRow=document.getElementById("api-bible-sync-row");'
+            . 'function toggleApi(){'
+            . 'var c=document.querySelector("input[name=\\"jform[params][provider_api_bible]\\"]:checked");'
+            . 'var on=c&&c.value==="1";'
+            . 'if(keyGrp)keyGrp.style.display=on?"":"none";'
+            . 'if(keyRow)keyRow.style.display=on?"":"none";'
+            . 'if(syncRow)syncRow.style.display=on?"":"none";'
+            . '}'
+            . 'radios.forEach(function(r){r.addEventListener("change",toggleApi);});'
+            . 'toggleApi();'
             . '})();'
             . '</script>';
 
