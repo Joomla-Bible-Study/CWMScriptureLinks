@@ -49,13 +49,28 @@ class TranslationsmanagerField extends FormField
      */
     protected function getInput(): string
     {
-        try {
-            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-            $wa->getRegistry()->addExtensionRegistryFile('lib_cwmscripture');
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->getRegistry()->addExtensionRegistryFile('lib_cwmscripture');
+
+        if ($wa->assetExists('style', 'lib_cwmscripture.translations-manager')) {
             $wa->useStyle('lib_cwmscripture.translations-manager');
+        } else {
+            $wa->registerAndUseStyle(
+                'lib_cwmscripture.translations-manager',
+                'media/lib_cwmscripture/css/translations-manager.css'
+            );
+        }
+
+        if ($wa->assetExists('script', 'lib_cwmscripture.translations-manager')) {
             $wa->useScript('lib_cwmscripture.translations-manager');
-        } catch (\Throwable $e) {
-            // Asset registration may fail if media not installed yet
+        } else {
+            $wa->registerAndUseScript(
+                'lib_cwmscripture.translations-manager',
+                'media/lib_cwmscripture/js/translations-manager.js',
+                [],
+                [],
+                ['core']
+            );
         }
 
         $params = ScriptureParamsHelper::getParams();
