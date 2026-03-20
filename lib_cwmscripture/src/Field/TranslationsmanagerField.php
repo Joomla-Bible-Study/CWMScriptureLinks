@@ -319,25 +319,35 @@ class TranslationsmanagerField extends FormField
      */
     private function renderTranslationsTable(string $token, int $gdprMode): string
     {
-        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        $db  = Factory::getContainer()->get(DatabaseInterface::class);
+        $esc = static fn (string $s): string => htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
 
-        // Count installed translations
         try {
             $query = $db->getQuery(true)
-                ->select('COUNT(*)')
+                ->select('*')
                 ->from($db->quoteName('#__bsms_bible_translations'))
-                ->where($db->quoteName('installed') . ' = 1');
+                ->order($db->quoteName('language') . ' ASC, ' . $db->quoteName('name') . ' ASC');
             $db->setQuery($query);
-            $installedCount = (int) $db->loadResult();
+            $translations = $db->loadObjectList();
         } catch (\Throwable) {
-            $installedCount = 0;
+            return '<div class="alert alert-warning">'
+                . Text::_('PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_TABLE_MISSING')
+                . '</div>';
+        }
+
+        $installedCount = 0;
+
+        foreach ($translations as $t) {
+            if ((int) ($t->installed ?? 0) === 1) {
+                $installedCount++;
+            }
         }
 
         $html = '<div class="row"><div class="col-12"><div class="cwmadmin-panel mb-4">';
 
-        // Header with title badge and action buttons
+        // Header
         $html .= '<div class="d-flex justify-content-between align-items-center mb-3">';
-        $html .= '<h3 class="tab-description mb-0" id="cwm-translations-header">'
+        $html .= '<h3 class="tab-description mb-0">'
             . Text::_('PLG_CONTENT_SCRIPTURELINKS_LOCAL_TRANSLATIONS');
 
         if ($installedCount > 0) {
@@ -345,39 +355,91 @@ class TranslationsmanagerField extends FormField
                 . $installedCount . ' ' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_INSTALLED') . '</span>';
         }
 
-        $html .= '</h3>';
-
-        $html .= '<div class="btn-group btn-group-sm">';
-        $html .= '<button type="button" class="btn btn-primary d-none" id="cwm-btn-update-all" '
-            . 'title="' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_UPDATE_ALL_DESC') . '">'
-            . '<i class="icon-download" aria-hidden="true"></i> ' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_UPDATE_ALL')
-            . '</button>';
-        $html .= '<button type="button" class="btn btn-danger d-none" id="cwm-btn-remove-all" '
-            . 'title="' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REMOVE_ALL') . '">'
-            . '<i class="icon-trash" aria-hidden="true"></i> ' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REMOVE_ALL')
-            . '</button>';
-        $html .= '<button type="button" class="btn btn-outline-secondary" id="cwm-btn-refresh-list" '
-            . 'title="' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REFRESH') . '">'
-            . '<i class="icon-refresh" aria-hidden="true"></i></button>';
-        $html .= '</div></div>';
-
+        $html .= '</h3></div>';
         $html .= '<p class="text-muted">' . Text::_('PLG_CONTENT_SCRIPTURELINKS_LOCAL_TRANSLATIONS_DESC') . '</p>';
 
-        // Translations list container (populated by JS)
-        $html .= '<div id="cwm-translations-list">';
-        $html .= '<div class="text-center py-3">'
-            . '<span class="spinner-border spinner-border-sm" role="status"></span> '
-            . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_LOADING')
-            . '</div>';
-        $html .= '</div>';
+        // Status message area for JS
+        $html .= '<div id="cwm-tm-status" class="alert" style="display:none;"></div>';
 
-        $html .= '</div></div></div>'; // end panel, col, row
+        if (empty($translations)) {
+            $html .= '<div class="alert alert-info">'
+                . Text::_('PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_NONE') . '</div>';
+        } else {
+            $html .= '<table class="table table-striped" id="cwm-translations-table">';
+            $html .= '<thead><tr>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_NAME') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_ABBREVIATION') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_LANGUAGE') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_SOURCE') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_STATUS') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_VERSES') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_SIZE') . '</th>';
+            $html .= '<th>' . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_ACTIONS') . '</th>';
+            $html .= '</tr></thead><tbody>';
 
-        // Config div for JS (same pattern as Proclaim's bible-translations-config)
-        $html .= '<div id="bible-translations-config" class="d-none" '
-            . 'data-gdpr-mode="' . $gdprMode . '" '
-            . 'data-token="' . $token . '"'
-            . '></div>';
+            foreach ($translations as $t) {
+                $installed  = (int) ($t->installed ?? 0) === 1;
+                $statusCls  = $installed ? 'badge bg-success' : 'badge bg-secondary';
+                $statusTxt  = $installed
+                    ? Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_INSTALLED')
+                    : Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_AVAILABLE');
+
+                $sizeDisplay = $installed && ($t->data_size ?? 0) > 0
+                    ? $this->formatBytes((int) $t->data_size)
+                    : (($t->estimated_size ?? 0) > 0 ? '~' . $this->formatBytes((int) $t->estimated_size) : '—');
+
+                $verseDisplay = $installed && ($t->verse_count ?? 0) > 0
+                    ? number_format((int) $t->verse_count) : '—';
+
+                $rowId = 'cwm-tm-row-' . $esc($t->abbreviation);
+
+                $html .= '<tr id="' . $rowId . '" data-abbreviation="' . $esc($t->abbreviation) . '">';
+                $html .= '<td><strong>' . $esc($t->name) . '</strong>';
+
+                if (!empty($t->downloaded_at)) {
+                    $html .= '<br><small class="text-muted">'
+                        . Text::sprintf('PLG_CONTENT_SCRIPTURELINKS_TM_DOWNLOADED_AT', $esc($t->downloaded_at))
+                        . '</small>';
+                }
+
+                $html .= '</td>';
+                $html .= '<td><code>' . $esc(strtoupper($t->abbreviation)) . '</code></td>';
+                $html .= '<td>' . $esc(strtoupper($t->language ?? '')) . '</td>';
+                $html .= '<td>' . $esc($t->source ?? '') . '</td>';
+                $html .= '<td><span class="cwm-tm-status-badge ' . $statusCls . '">' . $statusTxt . '</span></td>';
+                $html .= '<td class="cwm-tm-verses">' . $verseDisplay . '</td>';
+                $html .= '<td class="cwm-tm-size">' . $sizeDisplay . '</td>';
+                $html .= '<td class="cwm-tm-actions">';
+
+                if ($installed) {
+                    $html .= '<button type="button" class="btn btn-sm btn-outline-primary cwm-tm-btn-refresh" '
+                        . 'data-abbreviation="' . $esc($t->abbreviation) . '">'
+                        . '<span class="icon-loop" aria-hidden="true"></span> '
+                        . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REFRESH')
+                        . '</button> ';
+
+                    if (!\in_array(strtolower($t->abbreviation), ['kjv', 'web'], true)) {
+                        $html .= '<button type="button" class="btn btn-sm btn-outline-danger cwm-tm-btn-remove" '
+                            . 'data-abbreviation="' . $esc($t->abbreviation) . '">'
+                            . '<span class="icon-trash" aria-hidden="true"></span> '
+                            . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_REMOVE')
+                            . '</button>';
+                    }
+                } else {
+                    $html .= '<button type="button" class="btn btn-sm btn-success cwm-tm-btn-download" '
+                        . 'data-abbreviation="' . $esc($t->abbreviation) . '">'
+                        . '<span class="icon-download" aria-hidden="true"></span> '
+                        . Text::_('PLG_CONTENT_SCRIPTURELINKS_TM_DOWNLOAD')
+                        . '</button>';
+                }
+
+                $html .= '</td></tr>';
+            }
+
+            $html .= '</tbody></table>';
+        }
+
+        $html .= '</div></div></div>';
 
         return $html;
     }
