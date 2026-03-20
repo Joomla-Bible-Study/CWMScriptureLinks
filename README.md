@@ -1,11 +1,11 @@
-# CWM Scripture Library
+# CWM Scripture Links
 
-Shared Bible provider library and content plugin for Joomla 5/6.
+Content plugin for automatic scripture linking in Joomla 5/6 articles.
 
 ## What it does
 
-- **Library (`lib_cwmscripture`)** — Bible text lookup via multiple providers (GetBible.net, API.Bible, local DB), scripture reference parsing, caching, and rendering
 - **Content Plugin (`plg_content_scripturelinks`)** — Replaces `{scripture}` and `{bible}` tags in Joomla articles with scripture passages or links
+- **Library (`lib_cwmscripture`)** — Included as a [git submodule](https://github.com/Joomla-Bible-Study/lib_cwmscripture) providing Bible text lookup, caching, and rendering
 
 ## Requirements
 
@@ -35,8 +35,7 @@ Configure display mode (link, tooltip, inline passage, popup), default Bible ver
 ## Development
 
 ```bash
-composer install
-composer test          # Run PHPUnit tests
+git clone --recurse-submodules git@github.com:Joomla-Bible-Study/CWMScriptureLinks.git
 php build/build.php    # Build installable package
 ```
 

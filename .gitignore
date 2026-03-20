@@ -15,15 +15,10 @@ node_modules/
 composer.phar
 
 # Build outputs
+build/dist/
 *.zip
 bin/
 out/
-
-# Build reports
-build/reports/
-
-# Test cache
-.phpunit.cache/
 
 # OSX
 ._*

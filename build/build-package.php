@@ -2,12 +2,20 @@
 <?php
 
 /**
- * CWM Scripture Library - Package Build Script
+ * CWM Scripture Links - Package Build Script
  *
  * Creates pkg_cwmscripture-{version}.zip containing:
- *   - lib_cwmscripture.zip  (library extension)
+ *   - lib_cwmscripture.zip  (from library submodule build)
  *   - plg_content_scripturelinks.zip  (content plugin)
  *   - pkg_cwmscripture.xml  (package manifest)
+ *
+ * Prerequisites:
+ *   1. git submodule update --init --recursive
+ *   2. cd lib_cwmscripture && npm run build && php build/build-package.php
+ *
+ * Usage:
+ *   php build/build-package.php              # Build package
+ *   php build/build-package.php --verbose    # Show files being added
  */
 
 const BASE_DIR = __DIR__ . '/..';
@@ -27,11 +35,11 @@ function build(bool $verbose = false): void
     $manifestXml = simplexml_load_file(BASE_DIR . '/lib_cwmscripture/cwmscripture.xml');
 
     if (!$manifestXml) {
-        throw new \RuntimeException('Could not parse lib_cwmscripture/cwmscripture.xml');
+        throw new \RuntimeException('Could not parse lib_cwmscripture/cwmscripture.xml — did you init the submodule?');
     }
 
     $version = (string) $manifestXml->version;
-    echo "Building CWM Scripture Library v$version\n\n";
+    echo "Building CWM Scripture Links v$version\n\n";
 
     $buildDir = BASE_DIR . '/build/dist';
 
@@ -41,19 +49,26 @@ function build(bool $verbose = false): void
 
     mkdir($buildDir, 0777, true);
 
-    // Build library ZIP
-    echo "Creating lib_cwmscripture.zip...\n";
-    $libZip = new ZipArchive();
-    $libZipPath = $buildDir . '/lib_cwmscripture.zip';
+    // Locate pre-built library ZIP from submodule
+    $libDistDir = BASE_DIR . '/lib_cwmscripture/build/dist';
+    $libZipSource = null;
 
-    if ($libZip->open($libZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-        throw new \RuntimeException('Could not create lib_cwmscripture.zip');
+    if (is_dir($libDistDir)) {
+        foreach (glob($libDistDir . '/lib_cwmscripture-*.zip') as $candidate) {
+            $libZipSource = $candidate;
+            break;
+        }
     }
 
-    addDirectoryToZip($libZip, BASE_DIR . '/lib_cwmscripture', 'lib_cwmscripture', $verbose);
-    addDirectoryToZip($libZip, BASE_DIR . '/media/lib_cwmscripture', 'media/lib_cwmscripture', $verbose);
-    $libZip->close();
-    echo "  Done.\n";
+    if (!$libZipSource || !file_exists($libZipSource)) {
+        throw new \RuntimeException(
+            "lib_cwmscripture ZIP not found in lib_cwmscripture/build/dist/\n"
+            . "Run the library build first: cd lib_cwmscripture && php build/build-package.php"
+        );
+    }
+
+    echo "Using pre-built " . basename($libZipSource) . " from submodule\n";
+    copy($libZipSource, $buildDir . '/lib_cwmscripture.zip');
 
     // Build plugin ZIP
     echo "Creating plg_content_scripturelinks.zip...\n";

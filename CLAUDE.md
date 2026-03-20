@@ -11,34 +11,24 @@ CWMScriptureLinks is the **canonical scripture library** for the CWM (Christian 
 
 The project packages two Joomla extensions together:
 
-1. **`lib_cwmscripture`** — A Joomla library extension (`type="library"`) that owns the Bible provider system, scripture parsing, and 3 shared database tables.
+1. **`lib_cwmscripture`** — A Joomla library extension (included as a **git submodule** from [Joomla-Bible-Study/lib_cwmscripture](https://github.com/Joomla-Bible-Study/lib_cwmscripture)) that owns the Bible provider system, scripture parsing, and 3 shared database tables.
 2. **`plg_content_scripturelinks`** — A content plugin that replaces `{scripture}` and `{bible}` tags in article content with scripture passages/links.
 
 Both are distributed as a single Joomla package (`pkg_cwmscripture`).
+
+**Submodule note:** After cloning, run `git submodule update --init --recursive` to fetch the library code.
 
 **Proclaim dependency:** The Proclaim component (CWM Proclaim, `../Proclaim/`) includes this as a git submodule and depends on the library. Proclaim's install script installs both extensions and locks the library (`#__extensions.locked = 1`) to prevent disabling.
 
 ## Architecture
 
-### Library (`lib_cwmscripture/`)
+### Library (`lib_cwmscripture/` — git submodule)
+
+The library lives in its own repository: [Joomla-Bible-Study/lib_cwmscripture](https://github.com/Joomla-Bible-Study/lib_cwmscripture). See that repo's CLAUDE.md for full architecture details.
 
 Namespace: `CWM\Library\Scripture`
 
-- **`src/Bible/`** — Provider system (extracted from Proclaim):
-  - `BibleProviderInterface.php` — Contract: `getPassage()`, `getAvailableTranslations()`, `returnsText()`, `isOfflineCapable()`
-  - `AbstractBibleProvider.php` — Base class: book name constants, Proclaim-to-standard book mapping, DB cache read/write, HTTP GET with retry/backoff/DDoS detection
-  - `BiblePassageResult.php` — Value object for passage results
-  - `BibleProviderFactory.php` — Factory with priority chain: local → API.Bible → GetBible → fallback. Accepts a `Registry` of params for provider config.
-  - `Provider/LocalProvider.php` — Reads from `#__bsms_bible_verses` table
-  - `Provider/GetBibleProvider.php` — GetBible.net v2 API
-  - `Provider/ApiBibleProvider.php` — API.Bible (American Bible Society) with OSIS codes, FUMS tracking
-- **`src/Helper/`** — Scripture parsing (generic, no Proclaim coupling):
-  - `ScriptureHelper.php` — `ABBREVIATIONS` map (140+ entries), `parseReference()`, `formatReference()`, `getBookNumber()`, `getBookName()`, `getAllBooks()`
-  - `ScriptureReference.php` — Value object: booknumber, chapter/verse begin/end, bibleVersion
-- **`sql/`** — Owns 3 tables (keeping `#__bsms_` prefix for Proclaim compatibility):
-  - `#__bsms_bible_translations` — Translation catalog
-  - `#__bsms_bible_verses` — Local verse storage
-  - `#__bsms_scripture_cache` — API response cache
+Key components: Bible provider system (Local, GetBible, API.Bible), scripture parsing helpers, Bible importer, scripture renderer, and 3 database tables (`#__bsms_bible_translations`, `#__bsms_bible_verses`, `#__bsms_scripture_cache`).
 
 ### Content Plugin (`plg_content_scripturelinks/`)
 
@@ -76,6 +66,6 @@ All use `CREATE TABLE IF NOT EXISTS` for safe coexistence with existing Proclaim
 - The logger category is `cwmscripture.bible` (log file: `cwmscripture.bible.php`).
 - WebAsset names use prefix `lib_cwmscripture.*`.
 
-## No Build System Yet
+## Build
 
-Currently no build tools, package manager, or CI. The distributable package will be assembled manually or via a future build script in `build/`.
+Run `php build/build.php` to create the distributable `pkg_cwmscripture-{version}.zip`. The build script pulls the library from the submodule directory. Tests live in the `lib_cwmscripture` repo.
