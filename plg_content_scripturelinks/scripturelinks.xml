@@ -46,8 +46,7 @@
 
             <fieldset name="translations"
                       label="PLG_CONTENT_SCRIPTURELINKS_TAB_SCRIPTURE"
-                      description="PLG_CONTENT_SCRIPTURELINKS_TAB_SCRIPTURE_DESC"
-                      addfieldprefix="CWM\Plugin\Content\ScriptureLinks\Field">
+                      description="PLG_CONTENT_SCRIPTURELINKS_TAB_SCRIPTURE_DESC">
 
                 <!-- Hidden fields for Joomla form save — visible UI rendered by TranslationsManagerField -->
                 <field name="provider_getbible" type="hidden" default="1" />
