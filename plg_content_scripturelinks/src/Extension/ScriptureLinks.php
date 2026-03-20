@@ -663,7 +663,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 return;
             }
 
-            $http     = HttpFactory::getHttp();
+            $http     = (new HttpFactory())->getHttp();
             $response = $http->get(
                 'https://rest.api.bible/v1/bibles',
                 ['api-key' => $apiKey],
