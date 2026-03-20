@@ -11,12 +11,12 @@ CWMScriptureLinks is the **canonical scripture library** for the CWM (Christian 
 
 The project packages two Joomla extensions together:
 
-1. **`lib_cwmscripture`** — A Joomla library extension (`type="library"`) that owns the Bible provider system, scripture parsing, and 3 shared database tables.
-2. **`plg_content_scripturelinks`** — A content plugin that replaces `{scripture}` and `{bible}` tags in article content with scripture passages/links.
+1. **`lib_cwmscripture`** — A Joomla library extension in its own repo ([lib_cwmscripture](https://github.com/Joomla-Bible-Study/lib_cwmscripture)), included here as a git submodule. Owns the Bible provider system, scripture parsing, form fields, and 3 shared database tables.
+2. **`plg_content_scripturelinks`** — A content plugin that replaces `{scripture}` and `{bible}` tags in article content with scripture passages.
 
 Both are distributed as a single Joomla package (`pkg_cwmscripture`).
 
-**Proclaim dependency:** The Proclaim component (CWM Proclaim, `../Proclaim/`) includes this as a git submodule and depends on the library. Proclaim's install script installs both extensions and locks the library (`#__extensions.locked = 1`) to prevent disabling.
+**Consumers:** Proclaim, CWMLivingWord, and any CWM addon can reference the library repo independently. The plugin depends on the library but not vice versa.
 
 ## Architecture
 
