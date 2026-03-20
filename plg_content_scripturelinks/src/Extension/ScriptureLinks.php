@@ -72,6 +72,34 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         $app    = Factory::getApplication();
         $action = $app->getInput()->getCmd('action', '');
 
+        // Actions used by the plugin's own Translations Manager tab.
+        // These use com_ajax's event result pattern (POST + addResult).
+        $pluginActions = ['download', 'refresh', 'remove'];
+
+        if (\in_array($action, $pluginActions, true)) {
+            Session::checkToken('post') || throw new \RuntimeException('Invalid token', 403);
+
+            $abbr = $app->getInput()->getCmd('abbreviation', '');
+
+            if (empty($abbr)) {
+                throw new \RuntimeException('Missing translation abbreviation', 400);
+            }
+
+            AbstractBibleProvider::registerLogger();
+
+            $result = match ($action) {
+                'download' => $this->handlePluginDownload($abbr, false),
+                'refresh'  => $this->handlePluginDownload($abbr, true),
+                'remove'   => $this->handlePluginRemove($abbr),
+            };
+
+            $event->addResult($result);
+
+            return;
+        }
+
+        // Actions used by Proclaim's Admin Center Scripture tab.
+        // These use raw JSON output (GET token, echo + $app->close()).
         header('Content-Type: application/json; charset=utf-8');
 
         $dispatchers = [
@@ -94,6 +122,71 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         }
 
         $this->{$dispatchers[$action]}($app);
+    }
+
+    /**
+     * Handle download/refresh for the plugin's translations manager tab.
+     *
+     * @param   string  $abbreviation  Translation abbreviation
+     * @param   bool    $force         Force re-download
+     *
+     * @return  array  Result data for com_ajax response
+     *
+     * @since  1.1.0
+     */
+    private function handlePluginDownload(string $abbreviation, bool $force): array
+    {
+        $count = BibleImporter::downloadAndImport($abbreviation, $force);
+
+        if ($count < 0) {
+            throw new \RuntimeException(
+                \sprintf('Failed to download translation "%s". Check the log file for details.', strtoupper($abbreviation)),
+                500
+            );
+        }
+
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['installed', 'verse_count', 'data_size']))
+            ->from($db->quoteName('#__bsms_bible_translations'))
+            ->where($db->quoteName('abbreviation') . ' = :abbr')
+            ->bind(':abbr', $abbreviation);
+        $db->setQuery($query);
+        $row = $db->loadObject();
+
+        return [
+            'abbreviation' => $abbreviation,
+            'installed'    => (int) ($row->installed ?? 1),
+            'verse_count'  => (int) ($row->verse_count ?? $count),
+            'data_size'    => (int) ($row->data_size ?? 0),
+            'message'      => \sprintf(
+                '%s: %s verses downloaded successfully.',
+                strtoupper($abbreviation),
+                number_format($count)
+            ),
+        ];
+    }
+
+    /**
+     * Handle removal for the plugin's translations manager tab.
+     *
+     * @param   string  $abbreviation  Translation abbreviation
+     *
+     * @return  array  Result data for com_ajax response
+     *
+     * @since  1.1.0
+     */
+    private function handlePluginRemove(string $abbreviation): array
+    {
+        BibleImporter::removeTranslation($abbreviation);
+
+        return [
+            'abbreviation' => $abbreviation,
+            'installed'    => 0,
+            'verse_count'  => 0,
+            'data_size'    => 0,
+            'message'      => \sprintf('%s: translation removed.', strtoupper($abbreviation)),
+        ];
     }
 
     /**
