@@ -42,6 +42,14 @@
                     <option value="inline">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_INLINE</option>
                     <option value="popup">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_POPUP</option>
                 </field>
+
+                <field name="gdpr_mode" type="radio" default="0"
+                       label="PLG_CONTENT_SCRIPTURELINKS_GDPR_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_GDPR_DESC"
+                       layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
             </fieldset>
 
             <fieldset name="translations"
@@ -52,7 +60,6 @@
                 <field name="provider_getbible" type="hidden" default="1" />
                 <field name="provider_api_bible" type="hidden" default="0" />
                 <field name="api_bible_api_key" type="hidden" default="" filter="string" />
-                <field name="gdpr_mode" type="hidden" default="0" />
                 <field name="default_version" type="hidden" default="kjv" />
                 <field name="cache_days" type="hidden" default="30" />
 

@@ -68,7 +68,9 @@ class TranslationsmanagerField extends FormField
 
         // Inject CSS/JS inline — WebAssetManager doesn't work for form fields
         // rendered after <head> is already output
-        $html = '<link rel="stylesheet" href="' . $esc($mediaBase . '/css/translations-manager.css') . '" />';
+        $switcherCss = Uri::root(true) . '/media/system/css/fields/switcher.css';
+        $html = '<link rel="stylesheet" href="' . $esc($switcherCss) . '" />';
+        $html .= '<link rel="stylesheet" href="' . $esc($mediaBase . '/css/translations-manager.css') . '" />';
         $html .= '<script src="' . $esc($mediaBase . '/js/cwm-fetch.js') . '" defer></script>';
         $html .= '<script src="' . $esc($mediaBase . '/js/bible-translations.js') . '" defer></script>';
 
@@ -84,25 +86,16 @@ class TranslationsmanagerField extends FormField
         // GetBible toggle
         $html .= $this->renderSwitcher(
             $prefix . '[provider_getbible]',
-            'cwm_provider_getbible',
+            'jform_params_provider_getbible',
             Text::_('PLG_CONTENT_SCRIPTURELINKS_GETBIBLE_LABEL'),
             Text::_('PLG_CONTENT_SCRIPTURELINKS_GETBIBLE_DESC'),
             $providerGetbible
         );
 
-        // GDPR mode
-        $html .= $this->renderSwitcher(
-            $prefix . '[gdpr_mode]',
-            'cwm_gdpr_mode',
-            Text::_('PLG_CONTENT_SCRIPTURELINKS_GDPR_LABEL'),
-            Text::_('PLG_CONTENT_SCRIPTURELINKS_GDPR_DESC'),
-            $gdprMode
-        );
-
         // API.Bible toggle
         $html .= $this->renderSwitcher(
             $prefix . '[provider_api_bible]',
-            'cwm_provider_api_bible',
+            'jform_params_provider_api_bible',
             Text::_('PLG_CONTENT_SCRIPTURELINKS_APIBIBLE_LABEL'),
             Text::_('PLG_CONTENT_SCRIPTURELINKS_APIBIBLE_DESC'),
             $providerApiBible
@@ -116,15 +109,15 @@ class TranslationsmanagerField extends FormField
         }
 
         $html .= '<div class="control-group" id="cwm-api-key-group">';
-        $html .= '<div class="control-label"><label for="cwm_api_bible_api_key">'
+        $html .= '<div class="control-label"><label for="jform_params_api_bible_api_key">'
             . Text::_('PLG_CONTENT_SCRIPTURELINKS_APIKEY_LABEL') . '</label></div>';
         $html .= '<div class="controls"><div class="input-group">';
         $html .= '<input type="password" name="' . $esc($prefix . '[api_bible_api_key]') . '" '
-            . 'id="cwm_api_bible_api_key" '
+            . 'id="jform_params_api_bible_api_key" '
             . 'value="' . $esc($apiBibleKey) . '" '
             . 'placeholder="' . $esc($maskedKey) . '" '
             . 'class="form-control" />';
-        $html .= '<button type="button" class="btn btn-secondary" id="cwm_api_key_toggle" aria-label="Toggle visibility">'
+        $html .= '<button type="button" class="btn btn-secondary" id="jform_params_api_key_toggle" aria-label="Toggle visibility">'
             . '<span class="icon-eye" aria-hidden="true"></span></button>';
         $html .= '</div>';
         $html .= '<div class="form-text">' . Text::_('PLG_CONTENT_SCRIPTURELINKS_APIKEY_DESC') . '</div>';
@@ -157,23 +150,32 @@ class TranslationsmanagerField extends FormField
 
         // Default Bible Version — render as grouped select from DB
         $html .= '<div class="control-group">';
-        $html .= '<div class="control-label"><label for="cwm_default_version">'
+        $html .= '<div class="control-label"><label for="jform_params_default_version">'
             . Text::_('PLG_CONTENT_SCRIPTURELINKS_VERSION_LABEL') . '</label></div>';
         $html .= '<div class="controls">';
-        $html .= $this->renderVersionSelect($prefix . '[default_version]', 'cwm_default_version', $defaultVersion);
+        $html .= $this->renderVersionSelect($prefix . '[default_version]', 'jform_params_default_version', $defaultVersion);
         $html .= '<div class="form-text">' . Text::_('PLG_CONTENT_SCRIPTURELINKS_VERSION_DESC') . '</div>';
         $html .= '</div></div>';
 
         // Cache Days
         $html .= '<div class="control-group">';
-        $html .= '<div class="control-label"><label for="cwm_cache_days">'
+        $html .= '<div class="control-label"><label for="jform_params_cache_days">'
             . Text::_('PLG_CONTENT_SCRIPTURELINKS_CACHE_LABEL') . '</label></div>';
         $html .= '<div class="controls">';
         $html .= '<input type="number" name="' . $esc($prefix . '[cache_days]') . '" '
-            . 'id="cwm_cache_days" value="' . $cacheDays . '" '
+            . 'id="jform_params_cache_days" value="' . $cacheDays . '" '
             . 'min="1" max="365" class="form-control" />';
         $html .= '<div class="form-text">' . Text::_('PLG_CONTENT_SCRIPTURELINKS_CACHE_DESC') . '</div>';
         $html .= '</div></div>';
+
+        // GDPR mode
+        $html .= $this->renderSwitcher(
+            $prefix . '[gdpr_mode]',
+            'jform_params_gdpr_mode',
+            Text::_('PLG_CONTENT_SCRIPTURELINKS_GDPR_LABEL'),
+            Text::_('PLG_CONTENT_SCRIPTURELINKS_GDPR_DESC'),
+            $gdprMode
+        );
 
         $html .= '</div></div>'; // end panel, end right column
         $html .= '</div>'; // end row
@@ -211,18 +213,21 @@ class TranslationsmanagerField extends FormField
     private function renderSwitcher(string $name, string $id, string $label, string $desc, int $value): string
     {
         $esc     = static fn (string $s): string => htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
-        $yesChk  = $value ? ' checked' : '';
-        $noChk   = !$value ? ' checked' : '';
+        $noAttr  = !$value ? ' checked class="active"' : '';
+        $yesAttr = $value ? ' checked class="active"' : '';
 
         $html = '<div class="control-group">';
         $html .= '<div class="control-label"><label>' . $esc($label) . '</label></div>';
         $html .= '<div class="controls">';
-        $html .= '<fieldset class="switcher" id="' . $id . '">';
-        $html .= '<input type="radio" name="' . $esc($name) . '" id="' . $id . '0" value="0"' . $noChk . ' />';
+        $html .= '<fieldset id="' . $id . '">';
+        $html .= '<legend class="visually-hidden">' . $esc($label) . '</legend>';
+        $html .= '<div class="switcher">';
+        $html .= '<input type="radio" id="' . $id . '0" name="' . $esc($name) . '" value="0"' . $noAttr . '>';
         $html .= '<label for="' . $id . '0">' . Text::_('JNO') . '</label>';
-        $html .= '<input type="radio" name="' . $esc($name) . '" id="' . $id . '1" value="1"' . $yesChk . ' />';
+        $html .= '<input type="radio" id="' . $id . '1" name="' . $esc($name) . '" value="1"' . $yesAttr . '>';
         $html .= '<label for="' . $id . '1">' . Text::_('JYES') . '</label>';
         $html .= '<span class="toggle-outside"><span class="toggle-inside"></span></span>';
+        $html .= '</div>';
         $html .= '</fieldset>';
 
         if ($desc) {
@@ -413,12 +418,12 @@ class TranslationsmanagerField extends FormField
     private function renderInlineJs(): string
     {
         return '<script>
-document.addEventListener("DOMContentLoaded", function() {
+(function() {
     // API key eye toggle
-    var toggleBtn = document.getElementById("cwm_api_key_toggle");
+    var toggleBtn = document.getElementById("jform_params_api_key_toggle");
     if (toggleBtn) {
         toggleBtn.addEventListener("click", function() {
-            var input = document.getElementById("cwm_api_bible_api_key");
+            var input = document.getElementById("jform_params_api_bible_api_key");
             var icon = this.querySelector("span");
             if (input.type === "password") {
                 input.type = "text";
@@ -429,42 +434,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-
-    // Sync visible controls to hidden form fields so Joomla saves them
-    var syncFields = [
-        ["cwm_provider_getbible", "jform_params_provider_getbible"],
-        ["cwm_provider_api_bible", "jform_params_provider_api_bible"],
-        ["cwm_gdpr_mode", "jform_params_gdpr_mode"],
-        ["cwm_api_bible_api_key", "jform_params_api_bible_api_key"],
-        ["cwm_default_version", "jform_params_default_version"],
-        ["cwm_cache_days", "jform_params_cache_days"]
-    ];
-
-    // On form submit, copy values from visible controls to hidden fields
-    var form = document.getElementById("style-form") || document.querySelector("form[name=adminForm]");
-    if (form) {
-        form.addEventListener("submit", function() {
-            syncFields.forEach(function(pair) {
-                var visible = pair[0];
-                var hidden = pair[1];
-                var hiddenEl = document.getElementById(hidden);
-                if (!hiddenEl) return;
-
-                // Radio switcher: find checked input
-                var fieldset = document.getElementById(visible);
-                if (fieldset && fieldset.tagName === "FIELDSET") {
-                    var checked = fieldset.querySelector("input:checked");
-                    if (checked) hiddenEl.value = checked.value;
-                    return;
-                }
-
-                // Regular input/select
-                var el = document.getElementById(visible);
-                if (el) hiddenEl.value = el.value;
-            });
-        });
-    }
-});
+})();
 </script>';
     }
 
