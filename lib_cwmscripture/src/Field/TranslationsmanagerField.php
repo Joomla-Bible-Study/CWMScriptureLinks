@@ -124,7 +124,7 @@ class TranslationsmanagerField extends FormField
         $html .= '</div></div>';
 
         // Get API Key button
-        $html .= '<div id="cwm-api-bible-key-row" class="mb-3">';
+        $html .= '<div id="api-bible-key-row" class="mb-3">';
         $html .= '<a href="https://api.bible/sign-in" target="_blank" rel="noopener noreferrer" '
             . 'class="btn btn-sm btn-outline-secondary">'
             . '<i class="icon-key" aria-hidden="true"></i> '
@@ -133,12 +133,12 @@ class TranslationsmanagerField extends FormField
         $html .= '</div>';
 
         // Sync button
-        $html .= '<div id="cwm-api-bible-sync-row" class="mb-3">';
-        $html .= '<button type="button" class="btn btn-sm btn-primary" id="cwm-btn-sync-api-bible">'
+        $html .= '<div id="api-bible-sync-row" class="mb-3">';
+        $html .= '<button type="button" class="btn btn-sm btn-primary" id="btn-sync-api-bible">'
             . '<i class="icon-refresh" aria-hidden="true"></i> '
             . Text::_('PLG_CONTENT_SCRIPTURELINKS_SYNC_TRANSLATIONS')
             . '</button>';
-        $html .= '<span id="cwm-api-bible-sync-status" class="ms-2 small"></span>';
+        $html .= '<span id="api-bible-sync-status" class="ms-2 small"></span>';
         $html .= '</div>';
 
         $html .= '</div></div>'; // end panel, end left column
