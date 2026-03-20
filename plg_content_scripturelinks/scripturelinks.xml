@@ -42,11 +42,12 @@
                     <option value="inline">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_INLINE</option>
                     <option value="popup">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_POPUP</option>
                 </field>
+            </fieldset>
 
-                <field name="default_version" type="BibleTranslation" default="kjv"
-                       servable_only="true"
-                       label="PLG_CONTENT_SCRIPTURELINKS_VERSION_LABEL"
-                       description="PLG_CONTENT_SCRIPTURELINKS_VERSION_DESC" />
+            <fieldset name="translations"
+                      label="PLG_CONTENT_SCRIPTURELINKS_TAB_TRANSLATIONS"
+                      description="PLG_CONTENT_SCRIPTURELINKS_TAB_TRANSLATIONS_DESC"
+                      addfieldprefix="CWM\Plugin\Content\ScriptureLinks\Field">
 
                 <field name="provider_getbible" type="radio" default="1"
                        label="PLG_CONTENT_SCRIPTURELINKS_GETBIBLE_LABEL"
@@ -77,16 +78,16 @@
                     <option value="1">JYES</option>
                 </field>
 
+                <field name="default_version" type="BibleTranslation" default="kjv"
+                       servable_only="true"
+                       label="PLG_CONTENT_SCRIPTURELINKS_VERSION_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_VERSION_DESC" />
+
                 <field name="cache_days" type="number" default="30"
                        label="PLG_CONTENT_SCRIPTURELINKS_CACHE_LABEL"
                        description="PLG_CONTENT_SCRIPTURELINKS_CACHE_DESC"
                        min="1" max="365" />
-            </fieldset>
 
-            <fieldset name="translations"
-                      label="PLG_CONTENT_SCRIPTURELINKS_TAB_TRANSLATIONS"
-                      description="PLG_CONTENT_SCRIPTURELINKS_TAB_TRANSLATIONS_DESC"
-                      addfieldprefix="CWM\Plugin\Content\ScriptureLinks\Field">
                 <field name="translations_manager"
                        type="translationsmanager"
                        label="PLG_CONTENT_SCRIPTURELINKS_TRANSLATIONS_LABEL"
