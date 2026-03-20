@@ -50,6 +50,7 @@ class TranslationsManagerField extends FormField
     protected function getInput(): string
     {
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->getRegistry()->addExtensionRegistryFile('lib_cwmscripture');
         $wa->useStyle('lib_cwmscripture.translations-manager');
         $wa->useScript('lib_cwmscripture.translations-manager');
 
