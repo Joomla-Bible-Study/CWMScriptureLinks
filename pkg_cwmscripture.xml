@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" method="upgrade">
+    <name>pkg_cwmscripture</name>
+    <packagename>cwmscripture</packagename>
+    <author>CWM Team</author>
+    <creationDate>2026-03</creationDate>
+    <copyright>(C) 2026 CWM Team All rights reserved</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>support@christianwebministries.org</authorEmail>
+    <authorUrl>https://www.christianwebministries.org</authorUrl>
+    <version>1.0.0</version>
+    <description>CWM Scripture package: Bible provider library and content plugin for automatic scripture linking.</description>
+
+    <files>
+        <!-- Library installs first (order matters) -->
+        <file type="library" id="cwmscripture">lib_cwmscripture.zip</file>
+        <file type="plugin" group="content" id="scripturelinks">plg_content_scripturelinks.zip</file>
+    </files>
+</extension>

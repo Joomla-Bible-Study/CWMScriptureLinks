@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade">
+    <name>lib_cwmscripture</name>
+    <libraryname>cwmscripture</libraryname>
+    <author>CWM Team</author>
+    <creationDate>2026-03</creationDate>
+    <copyright>(C) 2026 CWM Team All rights reserved</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>support@christianwebministries.org</authorEmail>
+    <authorUrl>https://www.christianwebministries.org</authorUrl>
+    <version>1.0.0</version>
+    <description>LIB_CWMSCRIPTURE_DESCRIPTION</description>
+    <namespace path="src">CWM\Library\Scripture</namespace>
+
+    <files folder="lib_cwmscripture">
+        <folder>src</folder>
+        <folder>sql</folder>
+        <folder>language</folder>
+    </files>
+
+    <media destination="lib_cwmscripture" folder="media/lib_cwmscripture">
+        <filename>joomla.asset.json</filename>
+        <folder>css</folder>
+        <folder>js</folder>
+    </media>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+
+    <languages folder="lib_cwmscripture/language">
+        <language tag="en-GB">en-GB/en-GB.lib_cwmscripture.sys.ini</language>
+    </languages>
+</extension>

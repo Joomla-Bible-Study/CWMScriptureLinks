@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="content" method="upgrade">
+    <name>plg_content_scripturelinks</name>
+    <author>CWM Team</author>
+    <creationDate>2026-03</creationDate>
+    <copyright>(C) 2026 CWM Team All rights reserved</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>support@christianwebministries.org</authorEmail>
+    <authorUrl>https://www.christianwebministries.org</authorUrl>
+    <version>1.0.0</version>
+    <description>PLG_CONTENT_SCRIPTURELINKS_DESCRIPTION</description>
+    <namespace path="src">CWM\Plugin\Content\ScriptureLinks</namespace>
+
+    <files>
+        <folder plugin="scripturelinks">services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.plg_content_scripturelinks.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_content_scripturelinks.sys.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="mode" type="list" default="tag"
+                       label="PLG_CONTENT_SCRIPTURELINKS_MODE_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_MODE_DESC">
+                    <option value="tag">PLG_CONTENT_SCRIPTURELINKS_MODE_TAG</option>
+                    <option value="auto">PLG_CONTENT_SCRIPTURELINKS_MODE_AUTO</option>
+                </field>
+
+                <field name="display" type="list" default="link"
+                       label="PLG_CONTENT_SCRIPTURELINKS_DISPLAY_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_DISPLAY_DESC">
+                    <option value="link">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_LINK</option>
+                    <option value="tooltip">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_TOOLTIP</option>
+                    <option value="inline">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_INLINE</option>
+                    <option value="popup">PLG_CONTENT_SCRIPTURELINKS_DISPLAY_POPUP</option>
+                </field>
+
+                <field name="default_version" type="text" default="kjv"
+                       label="PLG_CONTENT_SCRIPTURELINKS_VERSION_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_VERSION_DESC"
+                       size="10" />
+
+                <field name="provider_getbible" type="radio" default="1"
+                       label="PLG_CONTENT_SCRIPTURELINKS_GETBIBLE_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_GETBIBLE_DESC"
+                       class="btn-group">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="provider_api_bible" type="radio" default="0"
+                       label="PLG_CONTENT_SCRIPTURELINKS_APIBIBLE_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_APIBIBLE_DESC"
+                       class="btn-group">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="api_bible_api_key" type="text" default=""
+                       label="PLG_CONTENT_SCRIPTURELINKS_APIKEY_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_APIKEY_DESC"
+                       size="40" />
+
+                <field name="gdpr_mode" type="radio" default="0"
+                       label="PLG_CONTENT_SCRIPTURELINKS_GDPR_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_GDPR_DESC"
+                       class="btn-group">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="cache_days" type="number" default="30"
+                       label="PLG_CONTENT_SCRIPTURELINKS_CACHE_LABEL"
+                       description="PLG_CONTENT_SCRIPTURELINKS_CACHE_DESC"
+                       min="1" max="365" />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

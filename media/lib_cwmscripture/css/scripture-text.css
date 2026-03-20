@@ -1,0 +1,46 @@
+/* CWM Scripture Library - Scripture text display styles */
+
+.scripture-container {
+    margin: 1em 0;
+}
+
+.scripture-text {
+    line-height: 1.8;
+}
+
+.scripture-body {
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.scripture-body sup {
+    font-size: 0.65em;
+    font-weight: 700;
+    color: #8b4513;
+    margin-right: 2px;
+}
+
+.scripture-copyright {
+    margin-top: 0.75em;
+    padding-top: 0.5em;
+    border-top: 1px solid #e0ddd5;
+    font-size: 0.8em;
+    color: #888;
+    font-style: italic;
+}
+
+.scripture-ref {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.scripture-link {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.scripture-inline {
+    background: #fafaf8;
+    border-left: 3px solid #8b4513;
+    padding: 1em 1.5em;
+    border-radius: 0 4px 4px 0;
+}

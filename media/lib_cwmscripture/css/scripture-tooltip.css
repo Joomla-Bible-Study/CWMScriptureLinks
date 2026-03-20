@@ -1,0 +1,8 @@
+/* CWM Scripture Library - Tooltip styles */
+
+.scripture-tooltip {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: help;
+    border-bottom: 1px dotted #8b4513;
+}

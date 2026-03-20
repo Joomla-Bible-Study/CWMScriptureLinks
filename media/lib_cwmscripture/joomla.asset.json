@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "lib_cwmscripture",
+  "version": "1.0.0",
+  "description": "CWM Scripture Library assets",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "lib_cwmscripture.scripture-text",
+      "type": "style",
+      "uri": "lib_cwmscripture/css/scripture-text.css"
+    },
+    {
+      "name": "lib_cwmscripture.scripture-tooltip",
+      "type": "style",
+      "uri": "lib_cwmscripture/css/scripture-tooltip.css"
+    },
+    {
+      "name": "lib_cwmscripture.scripture-switcher-css",
+      "type": "style",
+      "uri": "lib_cwmscripture/css/scripture-switcher.css"
+    },
+    {
+      "name": "lib_cwmscripture.scripture-switcher",
+      "type": "script",
+      "uri": "lib_cwmscripture/js/scripture-switcher.js",
+      "dependencies": [
+        "core"
+      ]
+    },
+    {
+      "name": "lib_cwmscripture.scripture-tooltip",
+      "type": "script",
+      "uri": "lib_cwmscripture/js/scripture-tooltip.js",
+      "dependencies": [
+        "core"
+      ]
+    }
+  ]
+}

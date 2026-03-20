@@ -1,0 +1,1 @@
+-- Initial version placeholder. No schema changes needed for 1.0.0.
