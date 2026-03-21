@@ -14,16 +14,22 @@
  *   2. cd libraries/lib_cwmscripture && npm run build && php build/build-package.php
  *
  * Usage:
- *   php build/build-package.php              # Build package
+ *   php build/build-package.php              # Build full package (library + plugin)
+ *   php build/build-package.php --plugin-only # Build only plg_content_scripturelinks.zip
  *   php build/build-package.php --verbose    # Show files being added
  */
 
 const BASE_DIR = __DIR__ . '/..';
 
-$verbose = \in_array('--verbose', $argv ?? [], true) || \in_array('-v', $argv ?? [], true);
+$verbose    = \in_array('--verbose', $argv ?? [], true) || \in_array('-v', $argv ?? [], true);
+$pluginOnly = \in_array('--plugin-only', $argv ?? [], true);
 
 try {
-    build($verbose);
+    if ($pluginOnly) {
+        buildPluginOnly($verbose);
+    } else {
+        build($verbose);
+    }
 } catch (\Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
@@ -104,6 +110,35 @@ function build(bool $verbose = false): void
     echo "  Done.\n";
 
     echo "\nPackage built: $pkgZipPath\n";
+}
+
+/**
+ * Build only the plugin ZIP (no library, no package wrapper).
+ * Used by pkg_proclaim's build process where the library is a separate zip.
+ */
+function buildPluginOnly(bool $verbose = false): void
+{
+    echo "Building plg_content_scripturelinks.zip (plugin only)\n\n";
+
+    $buildDir = BASE_DIR . '/build/dist';
+
+    if (is_dir($buildDir)) {
+        exec('rm -rf ' . escapeshellarg($buildDir));
+    }
+
+    mkdir($buildDir, 0777, true);
+
+    $plgZip     = new ZipArchive();
+    $plgZipPath = $buildDir . '/plg_content_scripturelinks.zip';
+
+    if ($plgZip->open($plgZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        throw new \RuntimeException('Could not create plg_content_scripturelinks.zip');
+    }
+
+    addDirectoryToZip($plgZip, BASE_DIR . '/plg_content_scripturelinks', '', $verbose);
+    $plgZip->close();
+
+    echo "Plugin built: $plgZipPath\n";
 }
 
 /**
