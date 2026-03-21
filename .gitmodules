@@ -1,3 +1,3 @@
-[submodule "lib_cwmscripture"]
-	path = lib_cwmscripture
+[submodule "libraries/lib_cwmscripture"]
+	path = libraries/lib_cwmscripture
 	url = git@github.com:Joomla-Bible-Study/lib_cwmscripture.git

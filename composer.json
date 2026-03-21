@@ -9,8 +9,8 @@
   },
   "autoload": {
     "psr-4": {
-      "CWM\\Library\\Scripture\\": "lib_cwmscripture/src/",
-      "CWM\\Plugin\\Content\\ScriptureLinks\\": "plg_content_scripturelinks/src/"
+      "CWM\\Library\\Scripture\\": "libraries/lib_cwmscripture/src/",
+      "CWM\\Plugin\\Content\\ScriptureLinks\\": "src/"
     }
   },
   "scripts": {

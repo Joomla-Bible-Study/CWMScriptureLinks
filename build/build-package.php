@@ -11,7 +11,7 @@
  *
  * Prerequisites:
  *   1. git submodule update --init --recursive
- *   2. cd lib_cwmscripture && npm run build && php build/build-package.php
+ *   2. cd libraries/lib_cwmscripture && npm run build && php build/build-package.php
  *
  * Usage:
  *   php build/build-package.php              # Build package
@@ -32,10 +32,10 @@ try {
 function build(bool $verbose = false): void
 {
     // Read version from library manifest
-    $manifestXml = simplexml_load_file(BASE_DIR . '/lib_cwmscripture/cwmscripture.xml');
+    $manifestXml = simplexml_load_file(BASE_DIR . '/libraries/lib_cwmscripture/cwmscripture.xml');
 
     if (!$manifestXml) {
-        throw new \RuntimeException('Could not parse lib_cwmscripture/cwmscripture.xml — did you init the submodule?');
+        throw new \RuntimeException('Could not parse libraries/lib_cwmscripture/cwmscripture.xml — did you init the submodule?');
     }
 
     $version = (string) $manifestXml->version;
@@ -50,7 +50,7 @@ function build(bool $verbose = false): void
     mkdir($buildDir, 0777, true);
 
     // Locate pre-built library ZIP from submodule
-    $libDistDir = BASE_DIR . '/lib_cwmscripture/build/dist';
+    $libDistDir = BASE_DIR . '/libraries/lib_cwmscripture/build/dist';
     $libZipSource = null;
 
     if (is_dir($libDistDir)) {
@@ -62,7 +62,7 @@ function build(bool $verbose = false): void
 
     if (!$libZipSource || !file_exists($libZipSource)) {
         throw new \RuntimeException(
-            "lib_cwmscripture ZIP not found in lib_cwmscripture/build/dist/\n"
+            "lib_cwmscripture ZIP not found in libraries/lib_cwmscripture/build/dist/\n"
             . "Run the library build first: cd lib_cwmscripture && php build/build-package.php"
         );
     }
@@ -79,7 +79,12 @@ function build(bool $verbose = false): void
         throw new \RuntimeException('Could not create plg_content_scripturelinks.zip');
     }
 
-    addDirectoryToZip($plgZip, BASE_DIR . '/plg_content_scripturelinks', '', $verbose);
+    // Add plugin directories from repo root
+    $plgZip->addFile(BASE_DIR . '/scripturelinks.xml', 'scripturelinks.xml');
+    addDirectoryToZip($plgZip, BASE_DIR . '/src', 'src', $verbose);
+    addDirectoryToZip($plgZip, BASE_DIR . '/services', 'services', $verbose);
+    addDirectoryToZip($plgZip, BASE_DIR . '/language', 'language', $verbose);
+    addDirectoryToZip($plgZip, BASE_DIR . '/tmpl', 'tmpl', $verbose);
     $plgZip->close();
     echo "  Done.\n";
 

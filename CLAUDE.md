@@ -22,7 +22,7 @@ Both are distributed as a single Joomla package (`pkg_cwmscripture`).
 
 ## Architecture
 
-### Library (`lib_cwmscripture/` — git submodule)
+### Library (`libraries/lib_cwmscripture/` — git submodule)
 
 The library lives in its own repository: [Joomla-Bible-Study/lib_cwmscripture](https://github.com/Joomla-Bible-Study/lib_cwmscripture). See that repo's CLAUDE.md for full architecture details.
 
@@ -30,7 +30,7 @@ Namespace: `CWM\Library\Scripture`
 
 Key components: Bible provider system (Local, GetBible, API.Bible), scripture parsing helpers, Bible importer, scripture renderer, and 3 database tables (`#__bsms_bible_translations`, `#__bsms_bible_verses`, `#__bsms_scripture_cache`).
 
-### Content Plugin (`plg_content_scripturelinks/`)
+### Content Plugin (repo root)
 
 Namespace: `CWM\Plugin\Content\ScriptureLinks`
 
