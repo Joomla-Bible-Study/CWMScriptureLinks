@@ -135,6 +135,7 @@ function buildPluginOnly(bool $verbose = false): void
         throw new \RuntimeException('Could not create plg_content_scripturelinks.zip');
     }
 
+    // Add plugin files from repo root (same structure as build())
     $plgZip->addFile(BASE_DIR . '/scripturelinks.xml', 'scripturelinks.xml');
     addDirectoryToZip($plgZip, BASE_DIR . '/src', 'src', $verbose);
     addDirectoryToZip($plgZip, BASE_DIR . '/services', 'services', $verbose);
