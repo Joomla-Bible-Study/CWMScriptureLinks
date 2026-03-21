@@ -110,7 +110,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      */
     public function onAjaxScripturelinks(\Joomla\Event\Event $event): void
     {
-        Session::checkToken('post') || throw new \RuntimeException('Invalid token', 403);
+        Session::checkToken('get') || throw new \RuntimeException('Invalid token', 403);
 
         $app    = $this->getApplication();
         $input  = $app->getInput();
