@@ -105,7 +105,7 @@ function build(bool $verbose = false): void
 
     $pkgZip->addFile($buildDir . '/lib_cwmscripture.zip', 'lib_cwmscripture.zip');
     $pkgZip->addFile($buildDir . '/plg_content_scripturelinks.zip', 'plg_content_scripturelinks.zip');
-    $pkgZip->addFile(BASE_DIR . '/pkg_cwmscripture.xml', 'pkg_cwmscripture.xml');
+    $pkgZip->addFile(BASE_DIR . '/build/pkg_cwmscripture.xml', 'pkg_cwmscripture.xml');
     $pkgZip->close();
     echo "  Done.\n";
 
@@ -135,7 +135,11 @@ function buildPluginOnly(bool $verbose = false): void
         throw new \RuntimeException('Could not create plg_content_scripturelinks.zip');
     }
 
-    addDirectoryToZip($plgZip, BASE_DIR . '/plg_content_scripturelinks', '', $verbose);
+    $plgZip->addFile(BASE_DIR . '/scripturelinks.xml', 'scripturelinks.xml');
+    addDirectoryToZip($plgZip, BASE_DIR . '/src', 'src', $verbose);
+    addDirectoryToZip($plgZip, BASE_DIR . '/services', 'services', $verbose);
+    addDirectoryToZip($plgZip, BASE_DIR . '/language', 'language', $verbose);
+    addDirectoryToZip($plgZip, BASE_DIR . '/tmpl', 'tmpl', $verbose);
     $plgZip->close();
 
     echo "Plugin built: $plgZipPath\n";
