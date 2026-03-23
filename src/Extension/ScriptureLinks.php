@@ -20,6 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Event\SubscriberInterface;
@@ -1122,15 +1123,44 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
 
         switch ($display) {
             case 'tooltip':
-                $tooltipText = strip_tags($text);
+                // Render as a Bootstrap 5 popover link that the
+                // scripture-tooltip.es6.js picks up on hover/tap.
+                // The JS fetches the verse text via AJAX and shows it
+                // in a styled popover — no need to embed text here.
+                try {
+                    $app = Factory::getApplication();
+                    $doc = $app->getDocument();
+                    $wa  = $doc->getWebAssetManager();
+                    $wa->getRegistry()->addExtensionRegistryFile('lib_cwmscripture');
+                    $wa->useScript('lib_cwmscripture.scripture-tooltip');
+                    $wa->useStyle('lib_cwmscripture.scripture-tooltip');
 
-                if (strlen($tooltipText) > 500) {
-                    $tooltipText = substr($tooltipText, 0, 497) . '...';
+                    // Register the AJAX URL for the tooltip JS if not already set.
+                    // Uses com_ajax when standalone, com_proclaim when available.
+                    $existing = $doc->getScriptOptions('cwmscripture.options');
+
+                    if (empty($existing['ajaxUrl'])) {
+                        $ajaxUrl = class_exists('CWM\\Component\\Proclaim\\Site\\Controller\\CwmscriptureController')
+                            ? Route::_(
+                                'index.php?option=com_proclaim&task=cwmscripture.getPassageXHR&format=raw',
+                                false
+                            )
+                            : Route::_(
+                                'index.php?option=com_ajax&plugin=scripturelinks&group=content&format=raw&task=getPassage',
+                                false
+                            );
+
+                        $doc->addScriptOptions('cwmscripture.options', ['ajaxUrl' => $ajaxUrl]);
+                    }
+                } catch (\Exception $e) {
+                    // Assets may not be available in non-HTML contexts
                 }
 
-                return '<span class="scripture-tooltip" title="' . htmlspecialchars($tooltipText) . '">'
+                return '<a href="#" class="proclaim-scripture-ref" tabindex="0" role="button"'
+                    . ' data-scripture-ref="' . htmlspecialchars($reference) . '"'
+                    . ' data-bible-version="' . htmlspecialchars($this->params->get('default_version', 'kjv')) . '">'
                     . htmlspecialchars($reference)
-                    . '</span>';
+                    . '</a>';
 
             case 'inline':
                 return '<div class="scripture-container scripture-inline">'
