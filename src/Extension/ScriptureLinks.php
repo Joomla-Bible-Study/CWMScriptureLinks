@@ -1156,7 +1156,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     // Assets may not be available in non-HTML contexts
                 }
 
-                return '<a href="#" class="proclaim-scripture-ref" tabindex="0" role="button"'
+                return '<a href="javascript:void(0)" class="proclaim-scripture-ref" tabindex="0" role="button"'
                     . ' data-scripture-ref="' . htmlspecialchars($reference) . '"'
                     . ' data-bible-version="' . htmlspecialchars($this->params->get('default_version', 'kjv')) . '">'
                     . htmlspecialchars($reference)
