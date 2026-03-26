@@ -59,6 +59,8 @@
                 <field name="provider_getbible" type="hidden" default="1" />
                 <field name="provider_api_bible" type="hidden" default="0" />
                 <field name="api_bible_api_key" type="hidden" default="" filter="string" />
+                <field name="provider_biblebrain" type="hidden" default="0" />
+                <field name="biblebrain_api_key" type="hidden" default="" filter="string" />
                 <field name="default_version" type="hidden" default="kjv" />
                 <field name="cache_days" type="hidden" default="30" />
 
