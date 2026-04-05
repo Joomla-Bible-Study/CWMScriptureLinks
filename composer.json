@@ -14,6 +14,8 @@
     }
   },
   "scripts": {
-    "build": "php build/build-package.php"
+    "build": "php build/build-package.php",
+    "sync-languages": "python3 build/sync_languages.py",
+    "sync-languages-force": "python3 build/sync_languages.py --force"
   }
 }
