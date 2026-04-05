@@ -407,7 +407,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             $totalSize = 0;
 
             foreach ($translations as $t) {
-                $totalSize      += (int) ($t->data_size ?? 0);
+                $totalSize += (int) ($t->data_size ?? 0);
                 $t->usage_count  = $usageCounts[$t->abbreviation] ?? 0;
             }
 
@@ -1013,7 +1013,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         $bookNames     = array_keys($abbreviations);
 
         // Sort longest first to avoid partial matches
-        usort($bookNames, static fn ($a, $b) => strlen($b) - strlen($a));
+        usort($bookNames, static fn ($a, $b) => \strlen($b) - \strlen($a));
 
         $escapedBooks = array_map(static fn ($name) => preg_quote($name, '#'), $bookNames);
         $booksPattern = implode('|', $escapedBooks);

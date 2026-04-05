@@ -56,7 +56,7 @@ function build(bool $verbose = false): void
     mkdir($buildDir, 0777, true);
 
     // Locate pre-built library ZIP from submodule
-    $libDistDir = BASE_DIR . '/libraries/lib_cwmscripture/build/dist';
+    $libDistDir   = BASE_DIR . '/libraries/lib_cwmscripture/build/dist';
     $libZipSource = null;
 
     if (is_dir($libDistDir)) {
@@ -78,7 +78,7 @@ function build(bool $verbose = false): void
 
     // Build plugin ZIP
     echo "Creating plg_content_scripturelinks.zip...\n";
-    $plgZip = new ZipArchive();
+    $plgZip     = new ZipArchive();
     $plgZipPath = $buildDir . '/plg_content_scripturelinks.zip';
 
     if ($plgZip->open($plgZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
@@ -163,7 +163,7 @@ function addDirectoryToZip(ZipArchive $zip, string $sourcePath, string $zipPrefi
             continue;
         }
 
-        $filePath = $file->getRealPath();
+        $filePath     = $file->getRealPath();
         $relativePath = substr($filePath, \strlen(realpath($sourcePath)) + 1);
 
         // Check excludes
