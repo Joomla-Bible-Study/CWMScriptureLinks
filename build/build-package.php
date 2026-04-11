@@ -87,6 +87,7 @@ function build(bool $verbose = false): void
 
     // Add plugin directories from repo root
     $plgZip->addFile(BASE_DIR . '/scripturelinks.xml', 'scripturelinks.xml');
+    $plgZip->addFile(BASE_DIR . '/script.php', 'script.php');
     addDirectoryToZip($plgZip, BASE_DIR . '/src', 'src', $verbose);
     addDirectoryToZip($plgZip, BASE_DIR . '/services', 'services', $verbose);
     addDirectoryToZip($plgZip, BASE_DIR . '/language', 'language', $verbose);
@@ -137,6 +138,7 @@ function buildPluginOnly(bool $verbose = false): void
 
     // Add plugin files from repo root (same structure as build())
     $plgZip->addFile(BASE_DIR . '/scripturelinks.xml', 'scripturelinks.xml');
+    $plgZip->addFile(BASE_DIR . '/script.php', 'script.php');
     addDirectoryToZip($plgZip, BASE_DIR . '/src', 'src', $verbose);
     addDirectoryToZip($plgZip, BASE_DIR . '/services', 'services', $verbose);
     addDirectoryToZip($plgZip, BASE_DIR . '/language', 'language', $verbose);
