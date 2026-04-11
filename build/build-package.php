@@ -95,6 +95,10 @@ function build(bool $verbose = false): void
     $plgZip->close();
     echo "  Done.\n";
 
+    echo "Creating plg_task_cwmscripture.zip...\n";
+    buildTaskPluginZip($buildDir, $verbose);
+    echo "  Done.\n";
+
     // Build package ZIP
     $pkgZipPath = $buildDir . '/pkg_cwmscripture-' . $version . '.zip';
     echo "Creating pkg_cwmscripture-$version.zip...\n";
@@ -106,6 +110,7 @@ function build(bool $verbose = false): void
 
     $pkgZip->addFile($buildDir . '/lib_cwmscripture.zip', 'lib_cwmscripture.zip');
     $pkgZip->addFile($buildDir . '/plg_content_scripturelinks.zip', 'plg_content_scripturelinks.zip');
+    $pkgZip->addFile($buildDir . '/plg_task_cwmscripture.zip', 'plg_task_cwmscripture.zip');
     $pkgZip->addFile(BASE_DIR . '/build/pkg_cwmscripture.xml', 'pkg_cwmscripture.xml');
     $pkgZip->close();
     echo "  Done.\n";
@@ -146,6 +151,39 @@ function buildPluginOnly(bool $verbose = false): void
     $plgZip->close();
 
     echo "Plugin built: $plgZipPath\n";
+
+    echo "Creating plg_task_cwmscripture.zip...\n";
+    buildTaskPluginZip($buildDir, $verbose);
+    echo "  Done.\n";
+}
+
+/**
+ * Build plg_task_cwmscripture.zip from the sibling directory.
+ *
+ * The task plugin lives at CWMScriptureLinks/plg_task_cwmscripture/ and has
+ * a flat layout (manifest at root, src/services/language subfolders).
+ */
+function buildTaskPluginZip(string $buildDir, bool $verbose): void
+{
+    $sourceDir = BASE_DIR . '/plg_task_cwmscripture';
+
+    if (!is_dir($sourceDir)) {
+        throw new \RuntimeException('plg_task_cwmscripture source directory missing');
+    }
+
+    $zipPath = $buildDir . '/plg_task_cwmscripture.zip';
+    $zip     = new ZipArchive();
+
+    if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        throw new \RuntimeException('Could not create plg_task_cwmscripture.zip');
+    }
+
+    $zip->addFile($sourceDir . '/cwmscripture.xml', 'cwmscripture.xml');
+    $zip->addFile($sourceDir . '/script.php', 'script.php');
+    addDirectoryToZip($zip, $sourceDir . '/src', 'src', $verbose);
+    addDirectoryToZip($zip, $sourceDir . '/services', 'services', $verbose);
+    addDirectoryToZip($zip, $sourceDir . '/language', 'language', $verbose);
+    $zip->close();
 }
 
 /**

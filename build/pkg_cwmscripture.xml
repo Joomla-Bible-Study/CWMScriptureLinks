@@ -8,12 +8,13 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>support@christianwebministries.org</authorEmail>
     <authorUrl>https://www.christianwebministries.org</authorUrl>
-    <version>1.0.0</version>
-    <description>CWM Scripture package: Bible provider library and content plugin for automatic scripture linking.</description>
+    <version>1.1.0</version>
+    <description>CWM Scripture package: Bible provider library, content plugin for automatic scripture linking, and task plugin for deferred background scripture work.</description>
 
     <files>
         <!-- Library installs first (order matters) -->
         <file type="library" id="cwmscripture">lib_cwmscripture.zip</file>
         <file type="plugin" group="content" id="scripturelinks">plg_content_scripturelinks.zip</file>
+        <file type="plugin" group="task" id="cwmscripture">plg_task_cwmscripture.zip</file>
     </files>
 </extension>

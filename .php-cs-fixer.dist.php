@@ -1,56 +1,30 @@
 <?php
 
 /**
- * @package        Proclaim.Site
- *
- * @copyright  (C) 2021 Open Source Matters, Inc. <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @package    CWM.Plugin.Content.ScriptureLinks
+ * @copyright  (C) 2026 CWM Team All rights reserved
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-/**
- * This is the configuration file for php-cs-fixer
- *
- * @see https://github.com/FriendsOfPHP/PHP-CS-Fixer
- * @see https://mlocati.github.io/php-cs-fixer-configurator/#version:3.0
- *
- *
- * If you would like to run the automated cleanup, then open a command line and type one of the commands below
- *
- * To run a quick dry run to see the files that would be modified:
- *
- *        ./libraries/vendor/bin/php-cs-fixer fix --dry-run
- *
- * To run a complete check, with automated fixing of each problem :
- *
- *        ./libraries/vendor/bin/php-cs-fixer fix
- *
- * You can run the cleanup on a single file if you need to; this is faster
- *
- *        ./libraries/vendor/bin/php-cs-fixer fix --dry-run administrator/index.php
- *        ./libraries/vendor/bin/php-cs-fixer fix administrator/index.php
- */
-
-// Add all the core Proclaim folders
 $finder = PhpCsFixer\Finder::create()
     ->in(
         [
-            __DIR__ . '/admin',
-            __DIR__ . '/build',
-            __DIR__ . '/site',
-            __DIR__ . '/modules',
-            __DIR__ . '/plugins',
+            __DIR__ . '/src',
+            __DIR__ . '/plg_task_cwmscripture/src',
             __DIR__ . '/tests',
         ]
     )
-    // Ignore template files as PHP CS fixer can't handle them properly
-    // https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues/3702#issuecomment-396717120
+    ->append(
+        [
+            __DIR__ . '/script.php',
+            __DIR__ . '/services/provider.php',
+            __DIR__ . '/plg_task_cwmscripture/script.php',
+            __DIR__ . '/plg_task_cwmscripture/services/provider.php',
+        ]
+    )
     ->notPath('/tmpl/')
     ->notPath('/layouts/')
-    // Ignore third-party vendor directories
-    ->notPath('#vendor/#')
-    // Ignore psr12 scripts because they contain invalid syntax
-    ->notPath('/psr12/')
-    ->notName('github_rebase.php');
+    ->notPath('#vendor/#');
 
 $config = new PhpCsFixer\Config();
 $config
@@ -60,40 +34,32 @@ $config
     ->setUsingCache(false)
     ->setRules(
         [
-            // Basic ruleset is PSR 12
-            '@PSR12' => true,
-            // Short array syntax
-            'array_syntax' => ['syntax' => 'short'],
-            // List of values separated by a comma is contained on a single line, should not have a trailing comma like [$foo, $bar,] = ...
+            '@PSR12'                          => true,
+            'array_syntax'                    => ['syntax' => 'short'],
             'no_trailing_comma_in_singleline' => true,
-            // Arrays on multiple lines should have a trailing comma
-            'trailing_comma_in_multiline' => ['elements' => ['arrays']],
-            // Align elements in multiline array and variable declarations on new lines below each other
-            'binary_operator_spaces' => ['operators' => ['=>' => 'align_single_space_minimal', '=' => 'align', '??=' => 'align']],
-            // The "No break" comment in switch statements
-            'no_break_comment' => ['comment_text' => 'No break'],
-            // Remove unused imports
-            'no_unused_imports' => true,
-            // Classes from the global namespace should not be imported
-            'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
-            // Alpha order imports
-            'ordered_imports' => ['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha'],
-            // There should not be useless else cases
-            'no_useless_else' => true,
-            // Native function invocation
-            'native_function_invocation' => ['include' => ['@compiler_optimized']],
-            // Adds null to type declarations when parameters have a default null value
-            'nullable_type_declaration_for_default_null_value' => true,
-            // Removes unneeded parentheses around control statements
-            'no_unneeded_control_parentheses' => true,
-            // Using isset($var) && multiple times should be done in one call.
-            'combine_consecutive_issets' => true,
-            // Calling unset on multiple items should be done in one call
-            'combine_consecutive_unsets' => true,
-            // There must be no sprintf calls with only the first argument
-            'no_useless_sprintf' => true,
-            // Fix indentation
-            'indentation_type' => true,
+            'trailing_comma_in_multiline'     => ['elements' => ['arrays']],
+            'binary_operator_spaces'          => [
+                'operators' => ['=>' => 'align_single_space_minimal', '=' => 'align', '??=' => 'align'],
+            ],
+            'no_break_comment'        => ['comment_text' => 'No break'],
+            'no_unused_imports'       => true,
+            'global_namespace_import' => [
+                'import_classes'   => false,
+                'import_constants' => false,
+                'import_functions' => false,
+            ],
+            'ordered_imports' => [
+                'imports_order'  => ['class', 'function', 'const'],
+                'sort_algorithm' => 'alpha',
+            ],
+            'no_useless_else'                                   => true,
+            'native_function_invocation'                        => ['include' => ['@compiler_optimized']],
+            'nullable_type_declaration_for_default_null_value'  => true,
+            'no_unneeded_control_parentheses'                   => true,
+            'combine_consecutive_issets'                        => true,
+            'combine_consecutive_unsets'                        => true,
+            'no_useless_sprintf'                                => true,
+            'indentation_type'                                  => true,
         ]
     )
     ->setFinder($finder);

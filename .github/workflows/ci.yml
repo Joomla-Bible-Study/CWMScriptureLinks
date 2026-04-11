@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "master", "development" ]
+    paths-ignore:
+      - '**.md'
+      - 'language/**'
+  pull_request:
+    branches: [ "main", "master", "development" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-checks:
+    name: PHP Lint & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, json, xml, zip, curl
+          coverage: none
+          tools: composer:v2
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Check PHP syntax
+        run: composer lint:syntax
+
+      - name: Run PHP CS Fixer (dry-run)
+        run: composer lint
+
+      - name: Run PHPUnit
+        run: composer test
+
+      - name: Build scripture library dependency
+        run: |
+          cd libraries/lib_cwmscripture
+          composer install --no-interaction --prefer-dist
+          php build/build-package.php
+
+      - name: Build full package
+        run: composer build
+
+      - name: Verify package contents
+        run: |
+          VERSION=$(php -r '$x = simplexml_load_file("scripturelinks.xml"); echo (string) $x->version;')
+          PKG="build/dist/pkg_cwmscripture-$VERSION.zip"
+          test -f "$PKG" || { echo "Package not built: $PKG"; exit 1; }
+          echo "Package contents:"
+          unzip -l "$PKG"
+          for inner in lib_cwmscripture.zip plg_content_scripturelinks.zip plg_task_cwmscripture.zip pkg_cwmscripture.xml; do
+            unzip -l "$PKG" | grep -q "$inner" || { echo "Missing $inner in package"; exit 1; }
+          done
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkg_cwmscripture
+          path: build/dist/pkg_cwmscripture-*.zip
+          retention-days: 7
