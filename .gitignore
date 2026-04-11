@@ -16,6 +16,8 @@ composer.phar
 
 # Build outputs
 build/dist/
+build/.source_cache.json
+build/.translation_cache.json
 *.zip
 bin/
 out/
