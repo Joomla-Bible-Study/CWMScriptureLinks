@@ -32,6 +32,13 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: libraries/lib_cwmscripture/package-lock.json
+
       - name: Get Composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -59,6 +66,8 @@ jobs:
         run: |
           cd libraries/lib_cwmscripture
           composer install --no-interaction --prefer-dist
+          npm ci
+          npm run build
           php build/build-package.php
 
       - name: Build full package
