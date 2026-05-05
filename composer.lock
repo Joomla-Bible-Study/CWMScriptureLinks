@@ -295,16 +295,16 @@
         },
         {
             "name": "cwm/build-tools",
-            "version": "v0.2.1-alpha",
+            "version": "v0.2.3-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools.git",
-                "reference": "a304cc3d4a464ac5047aa63ec94127393f5a0b43"
+                "reference": "f6397ead99979b11ca43cce9ca1239214bfe3ad0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/a304cc3d4a464ac5047aa63ec94127393f5a0b43",
-                "reference": "a304cc3d4a464ac5047aa63ec94127393f5a0b43",
+                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/f6397ead99979b11ca43cce9ca1239214bfe3ad0",
+                "reference": "f6397ead99979b11ca43cce9ca1239214bfe3ad0",
                 "shasum": ""
             },
             "require": {
@@ -325,6 +325,7 @@
                 "bin/cwm-sync-languages",
                 "bin/cwm-ars-publish",
                 "bin/cwm-ars-list",
+                "bin/cwm-ars-create-stream",
                 "bin/cwm-changelog",
                 "bin/cwm-init"
             ],
@@ -357,10 +358,10 @@
                 "release"
             ],
             "support": {
-                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.2.1-alpha",
+                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.2.3-alpha",
                 "issues": "https://github.com/Joomla-Bible-Study/cwm-build-tools/issues"
             },
-            "time": "2026-05-05T19:41:25+00:00"
+            "time": "2026-05-05T20:20:57+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
