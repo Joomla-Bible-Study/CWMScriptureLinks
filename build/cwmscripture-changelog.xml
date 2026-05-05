@@ -15,4 +15,29 @@
 -->
 <changelogs>
 
+    <!-- ============================================================ -->
+    <!-- 1.1.4                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.1.4</version>
+        <date>2026-05-05</date>
+        <addition>
+            <item>Joomla update server wiring: &lt;changelogurl&gt; and &lt;updateservers&gt; in the package and library manifests so Joomla can poll for updates and show changelog details on the user side.</item>
+            <item>Akeeba Release System (ARS) integration for both the package (category 5, update stream 4) and the library (category 6, update stream 5).</item>
+            <item>Adopted the new cwm/build-tools shared release pipeline (composer release / bump / package / ars-publish / changelog / sync-languages / sync-configs).</item>
+            <item>Per-extension cwm-build.config.json describing the package layout, ARS endpoint, and changelog URL.</item>
+            <item>Empty changelog skeleton (build/cwmscripture-changelog.xml) that future releases append to via cwm-changelog.</item>
+        </addition>
+        <change>
+            <item>Untangled component versions: each of the package, library, and bundled plugins now tracks its own version cadence. cwm-bump from this repo only touches the package wrapper manifest; the library bumps from its own repo, plugins bump only when their code changes.</item>
+            <item>Build script (build/build-package.php) now reads each component&#x27;s version independently and self-verifies inner zip contents before exiting.</item>
+            <item>Standardized manifest metadata (authorEmail info@christianwebministries.org, copyright (C) 2026 CWM Team All rights reserved, creationDate May 2026).</item>
+        </change>
+        <note>
+            <item>This release is the first cut using the shared cwm/build-tools pipeline. ARS publish, changelog generation, and Joomla update polling are all live.</item>
+        </note>
+    </changelog>
+
 </changelogs>
