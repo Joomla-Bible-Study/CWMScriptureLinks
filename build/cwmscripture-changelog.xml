@@ -9,9 +9,12 @@
     Hosted at:
     https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml
 
-    Wired into ARS via cwm-build.config.json -> ars.changelogUrl, which
-    `cwm-ars-publish` patches onto the update stream so Joomla's update
-    notifications can show the changelog details.
+    Joomla reads this file via the `<changelogurl>` element in the
+    package manifest (build/pkg_cwmscripture.xml) when checking for
+    updates. The URL is also recorded in cwm-build.config.json under
+    `changelog.url` for tooling reference; modern Akeeba ARS does not
+    expose a changelog field on its update streams, so the manifest
+    element is the load-bearing wiring.
 -->
 <changelogs>
 
