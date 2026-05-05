@@ -8,9 +8,16 @@
     "php": ">=8.3"
   },
   "require-dev": {
+    "cwm/build-tools": "^0.1@alpha",
     "friendsofphp/php-cs-fixer": "^3.0",
     "phpunit/phpunit": "^12.5"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "CWM\\Library\\Scripture\\": "libraries/lib_cwmscripture/src/",
@@ -32,6 +39,10 @@
     "lint": "php-cs-fixer fix --dry-run --diff",
     "lint:fix": "php-cs-fixer fix",
     "lint:syntax": "find src plg_task_cwmscripture -type f -name '*.php' -print0 | xargs -0 -n 1 -P 8 php -l > /dev/null",
-    "check": ["@lint:syntax", "@lint", "@test"]
+    "check": ["@lint:syntax", "@lint", "@test"],
+    "release":      "cwm-release",
+    "bump":         "cwm-bump",
+    "package":      "cwm-package",
+    "sync-configs": "cwm-sync-configs"
   }
 }
