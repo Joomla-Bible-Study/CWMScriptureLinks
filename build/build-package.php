@@ -134,7 +134,52 @@ function build(bool $verbose = false): void
     $pkgZip->close();
     echo "  Done.\n";
 
+    verifyPackage($pkgZipPath, [
+        'lib_cwmscripture.zip',
+        'plg_content_scripturelinks.zip',
+        'plg_task_cwmscripture.zip',
+        'pkg_cwmscripture.xml',
+    ]);
+
     echo "\nPackage built: $pkgZipPath\n";
+}
+
+/**
+ * Re-open the produced zip and confirm every expected inner entry is present.
+ *
+ * Catches truncated builds and missing files before they reach a Joomla install
+ * or a release. Hoisted out of CI so the build self-verifies; CI just runs the
+ * build and trusts a non-zero exit means failure.
+ */
+function verifyPackage(string $zipPath, array $expectedEntries): void
+{
+    if (!is_file($zipPath)) {
+        throw new \RuntimeException("Verify failed: package not found at $zipPath");
+    }
+
+    $zip = new ZipArchive();
+
+    if ($zip->open($zipPath) !== true) {
+        throw new \RuntimeException("Verify failed: could not open $zipPath");
+    }
+
+    $present = [];
+
+    for ($i = 0; $i < $zip->numFiles; $i++) {
+        $present[] = $zip->getNameIndex($i);
+    }
+
+    $zip->close();
+
+    $missing = array_diff($expectedEntries, $present);
+
+    if (!empty($missing)) {
+        throw new \RuntimeException(
+            "Verify failed: missing inner entries in " . basename($zipPath) . ": " . implode(', ', $missing)
+        );
+    }
+
+    echo "Verified: " . basename($zipPath) . " contains " . \count($expectedEntries) . " expected entries\n";
 }
 
 /**

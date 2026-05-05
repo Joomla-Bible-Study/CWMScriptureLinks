@@ -76,16 +76,15 @@ jobs:
       - name: Build full package
         run: composer build
 
-      - name: Verify package contents
+      - name: List package contents
         run: |
           VERSION=$(php -r '$x = simplexml_load_file("build/pkg_cwmscripture.xml"); echo (string) $x->version;')
           PKG="build/dist/pkg_cwmscripture-$VERSION.zip"
           test -f "$PKG" || { echo "Package not built: $PKG"; exit 1; }
           echo "Package contents:"
           unzip -l "$PKG"
-          for inner in lib_cwmscripture.zip plg_content_scripturelinks.zip plg_task_cwmscripture.zip pkg_cwmscripture.xml; do
-            unzip -l "$PKG" | grep -q "$inner" || { echo "Missing $inner in package"; exit 1; }
-          done
+        # Inner-entry verification lives in build/build-package.php so the build
+        # itself fails fast on missing files; CI just lists for log visibility.
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v7
