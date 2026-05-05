@@ -78,7 +78,7 @@ jobs:
 
       - name: Verify package contents
         run: |
-          VERSION=$(php -r '$x = simplexml_load_file("scripturelinks.xml"); echo (string) $x->version;')
+          VERSION=$(php -r '$x = simplexml_load_file("build/pkg_cwmscripture.xml"); echo (string) $x->version;')
           PKG="build/dist/pkg_cwmscripture-$VERSION.zip"
           test -f "$PKG" || { echo "Package not built: $PKG"; exit 1; }
           echo "Package contents:"

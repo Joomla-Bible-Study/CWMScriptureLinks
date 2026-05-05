@@ -37,15 +37,34 @@ try {
 
 function build(bool $verbose = false): void
 {
-    // Read version from library manifest
-    $manifestXml = simplexml_load_file(BASE_DIR . '/libraries/lib_cwmscripture/cwmscripture.xml');
+    // Each extension carries its own version. The package wrapper has its own
+    // version too; it's what names the final pkg_cwmscripture-*.zip and what
+    // Joomla shows for the package install.
+    $libManifest = simplexml_load_file(BASE_DIR . '/libraries/lib_cwmscripture/cwmscripture.xml');
 
-    if (!$manifestXml) {
+    if (!$libManifest) {
         throw new \RuntimeException('Could not parse libraries/lib_cwmscripture/cwmscripture.xml — did you init the submodule?');
     }
 
-    $version = (string) $manifestXml->version;
-    echo "Building CWM Scripture Links v$version\n\n";
+    $pkgManifest = simplexml_load_file(BASE_DIR . '/build/pkg_cwmscripture.xml');
+
+    if (!$pkgManifest) {
+        throw new \RuntimeException('Could not parse build/pkg_cwmscripture.xml');
+    }
+
+    $plgManifest = simplexml_load_file(BASE_DIR . '/scripturelinks.xml');
+
+    if (!$plgManifest) {
+        throw new \RuntimeException('Could not parse scripturelinks.xml');
+    }
+
+    $libVersion = (string) $libManifest->version;
+    $pkgVersion = (string) $pkgManifest->version;
+    $plgVersion = (string) $plgManifest->version;
+
+    echo "Building CWM Scripture package v$pkgVersion\n";
+    echo "  library: v$libVersion\n";
+    echo "  plugin:  v$plgVersion\n\n";
 
     $buildDir = BASE_DIR . '/build/dist';
 
@@ -100,8 +119,8 @@ function build(bool $verbose = false): void
     echo "  Done.\n";
 
     // Build package ZIP
-    $pkgZipPath = $buildDir . '/pkg_cwmscripture-' . $version . '.zip';
-    echo "Creating pkg_cwmscripture-$version.zip...\n";
+    $pkgZipPath = $buildDir . '/pkg_cwmscripture-' . $pkgVersion . '.zip';
+    echo "Creating pkg_cwmscripture-$pkgVersion.zip...\n";
     $pkgZip = new ZipArchive();
 
     if ($pkgZip->open($pkgZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {

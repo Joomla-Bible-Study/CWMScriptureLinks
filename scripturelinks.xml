@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>support@christianwebministries.org</authorEmail>
     <authorUrl>https://www.christianwebministries.org</authorUrl>
-    <version>1.1.3</version>
+    <version>1.1.0</version>
     <description>PLG_CONTENT_SCRIPTURELINKS_DESCRIPTION</description>
     <namespace path="src">CWM\Plugin\Content\ScriptureLinks</namespace>
     <scriptfile>script.php</scriptfile>
