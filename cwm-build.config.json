@@ -18,7 +18,7 @@
     "ars": {
         "endpoint": "https://www.christianwebministries.org",
         "categoryId": 5,
-        "updateStreamId": 0,
+        "updateStreamId": 4,
         "environments": ["45", "46", "48", "49", "50"],
         "tokenItem": "CWM ARS API Token",
         "tokenVault": "CWM",
