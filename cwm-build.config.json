@@ -22,8 +22,7 @@
         "environments": ["45", "46", "48", "49", "50"],
         "tokenItem": "CWM ARS API Token",
         "tokenVault": "CWM",
-        "itemDescription": "CWM Scripture Links package — bundles the shared scripture library, the content plugin that processes {scripture}/{bible} tags in Joomla articles, and the task plugin for background translation downloads.",
-        "changelogUrl": "https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml"
+        "itemDescription": "CWM Scripture Links package — bundles the shared scripture library, the content plugin that processes {scripture}/{bible} tags in Joomla articles, and the task plugin for background translation downloads."
     },
     "github": {
         "owner": "Joomla-Bible-Study",
@@ -31,6 +30,7 @@
         "releaseBranch": "main"
     },
     "changelog": {
-        "file": "build/cwmscripture-changelog.xml"
+        "file": "build/cwmscripture-changelog.xml",
+        "url":  "https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml"
     }
 }

@@ -11,6 +11,12 @@
     <version>1.1.4</version>
     <description>CWM Scripture package: Bible provider library, content plugin for automatic scripture linking, and task plugin for deferred background scripture work.</description>
 
+    <changelogurl>https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml</changelogurl>
+
+    <updateservers>
+        <server type="extension" name="CWM Scripture Package">https://www.christianwebministries.org/index.php?option=com_ars&amp;view=update&amp;format=xml&amp;id=4</server>
+    </updateservers>
+
     <files>
         <!-- Library installs first (order matters) -->
         <file type="library" id="cwmscripture">lib_cwmscripture.zip</file>

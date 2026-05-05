@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f8927b4b82d8ff1b845113aa79e7d316",
+    "content-hash": "1516f8149d8f194b101cb0a887a0d799",
     "packages": [],
     "packages-dev": [
         {
@@ -295,16 +295,16 @@
         },
         {
             "name": "cwm/build-tools",
-            "version": "v0.2.3-alpha",
+            "version": "v0.3.0-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools.git",
-                "reference": "f6397ead99979b11ca43cce9ca1239214bfe3ad0"
+                "reference": "f81bd762bac4667fdac1920528becefd92629ed5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/f6397ead99979b11ca43cce9ca1239214bfe3ad0",
-                "reference": "f6397ead99979b11ca43cce9ca1239214bfe3ad0",
+                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/f81bd762bac4667fdac1920528becefd92629ed5",
+                "reference": "f81bd762bac4667fdac1920528becefd92629ed5",
                 "shasum": ""
             },
             "require": {
@@ -358,10 +358,10 @@
                 "release"
             ],
             "support": {
-                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.2.3-alpha",
+                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.3.0-alpha",
                 "issues": "https://github.com/Joomla-Bible-Study/cwm-build-tools/issues"
             },
-            "time": "2026-05-05T20:20:57+00:00"
+            "time": "2026-05-05T20:40:25+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
