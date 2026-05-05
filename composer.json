@@ -8,7 +8,7 @@
     "php": ">=8.3"
   },
   "require-dev": {
-    "cwm/build-tools": "^0.1@alpha",
+    "cwm/build-tools": "^0.2@alpha",
     "friendsofphp/php-cs-fixer": "^3.0",
     "phpunit/phpunit": "^12.5"
   },
@@ -31,18 +31,19 @@
     }
   },
   "scripts": {
-    "build": "php build/build-package.php",
-    "sync-languages": "python3 build/sync_languages.py",
-    "sync-languages-force": "python3 build/sync_languages.py --force",
-    "test": "phpunit",
-    "test:unit": "phpunit --testsuite unit",
-    "lint": "php-cs-fixer fix --dry-run --diff",
-    "lint:fix": "php-cs-fixer fix",
-    "lint:syntax": "find src plg_task_cwmscripture -type f -name '*.php' -print0 | xargs -0 -n 1 -P 8 php -l > /dev/null",
-    "check": ["@lint:syntax", "@lint", "@test"],
-    "release":      "cwm-release",
-    "bump":         "cwm-bump",
-    "package":      "cwm-package",
-    "sync-configs": "cwm-sync-configs"
+    "build":           "php build/build-package.php",
+    "test":            "phpunit",
+    "test:unit":       "phpunit --testsuite unit",
+    "lint":            "php-cs-fixer fix --dry-run --diff",
+    "lint:fix":        "php-cs-fixer fix",
+    "lint:syntax":     "find src plg_task_cwmscripture -type f -name '*.php' -print0 | xargs -0 -n 1 -P 8 php -l > /dev/null",
+    "check":           ["@lint:syntax", "@lint", "@test"],
+    "release":         "cwm-release",
+    "bump":            "cwm-bump",
+    "package":         "cwm-package",
+    "ars-publish":     "cwm-ars-publish",
+    "changelog":       "cwm-changelog",
+    "sync-configs":    "cwm-sync-configs",
+    "sync-languages":  "cwm-sync-languages"
   }
 }

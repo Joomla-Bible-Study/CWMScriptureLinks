@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5be7095adea5bfd906419db685773d86",
+    "content-hash": "f8927b4b82d8ff1b845113aa79e7d316",
     "packages": [],
     "packages-dev": [
         {
@@ -295,16 +295,16 @@
         },
         {
             "name": "cwm/build-tools",
-            "version": "v0.1.0-alpha",
+            "version": "v0.2.0-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools.git",
-                "reference": "fbd8d224938e54db3094829b5344b4610cb72d9c"
+                "reference": "f947d35a60166cf324638c293700fb8c6cc6fb82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/fbd8d224938e54db3094829b5344b4610cb72d9c",
-                "reference": "fbd8d224938e54db3094829b5344b4610cb72d9c",
+                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/f947d35a60166cf324638c293700fb8c6cc6fb82",
+                "reference": "f947d35a60166cf324638c293700fb8c6cc6fb82",
                 "shasum": ""
             },
             "require": {
@@ -322,6 +322,9 @@
                 "bin/cwm-bump",
                 "bin/cwm-package",
                 "bin/cwm-sync-configs",
+                "bin/cwm-sync-languages",
+                "bin/cwm-ars-publish",
+                "bin/cwm-changelog",
                 "bin/cwm-init"
             ],
             "type": "library",
@@ -353,10 +356,10 @@
                 "release"
             ],
             "support": {
-                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.1.0-alpha",
+                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.2.0-alpha",
                 "issues": "https://github.com/Joomla-Bible-Study/cwm-build-tools/issues"
             },
-            "time": "2026-05-05T19:10:16+00:00"
+            "time": "2026-05-05T19:34:09+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
