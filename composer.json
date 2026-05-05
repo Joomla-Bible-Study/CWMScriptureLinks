@@ -42,6 +42,7 @@
     "bump":            "cwm-bump",
     "package":         "cwm-package",
     "ars-publish":     "cwm-ars-publish",
+    "ars-list":        "cwm-ars-list",
     "changelog":       "cwm-changelog",
     "sync-configs":    "cwm-sync-configs",
     "sync-languages":  "cwm-sync-languages"
