@@ -18,6 +18,9 @@ composer.phar
 .phpunit.cache/
 .php-cs-fixer.cache
 
+# Local dev env (cwm-build-tools build.properties)
+build.properties
+
 # Build outputs
 build/dist/
 build/.source_cache.json

@@ -8,7 +8,7 @@
     "php": ">=8.3"
   },
   "require-dev": {
-    "cwm/build-tools": "^0.3.2@alpha",
+    "cwm/build-tools": "^0.4@alpha",
     "friendsofphp/php-cs-fixer": "^3.0",
     "phpunit/phpunit": "^12.5"
   },
@@ -45,6 +45,14 @@
     "ars-list":        "cwm-ars-list",
     "changelog":       "cwm-changelog",
     "sync-configs":    "cwm-sync-configs",
-    "sync-languages":  "cwm-sync-languages"
+    "sync-languages":  "cwm-sync-languages",
+
+    "setup":           "cwm-setup",
+    "link":            "cwm-link",
+    "link-check":      "cwm-link-check",
+    "clean":           "cwm-clean",
+    "verify":          "cwm-verify",
+    "joomla-install":  "cwm-joomla-install",
+    "joomla-latest":   "cwm-joomla-latest"
   }
 }
