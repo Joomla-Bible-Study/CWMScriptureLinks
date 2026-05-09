@@ -19,6 +19,24 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.1.5                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.1.5</version>
+        <date>2026-05-09</date>
+        <fix>
+            <item>scripturelinks.xml version bumped from 1.1.0 → 1.1.5. The plugin manifest had been left untouched at 1.1.0 since 9 commits before v1.1.4; only the package wrapper was bumped during prior releases, so users saw a 1.1.0 plugin row inside a 1.1.4 package install.</item>
+            <item>plg_task_cwmscripture/cwmscripture.xml version bumped from 1.1.0 → 1.1.5 for the same reason.</item>
+            <item>Set full creationDate values where they were month-only.</item>
+        </fix>
+        <change>
+            <item>Bump nested lib_cwmscripture submodule pointer to v1.1.4 (dead-code cleanup, build-tools v0.4, 7 new locales).</item>
+        </change>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.1.4                                                    -->
     <!-- ============================================================ -->
     <changelog>
