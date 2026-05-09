@@ -2,12 +2,12 @@
 <extension type="plugin" group="content" method="upgrade">
     <name>plg_content_scripturelinks</name>
     <author>CWM Team</author>
-    <creationDate>May 2026</creationDate>
+    <creationDate>May 8, 2026</creationDate>
     <copyright>(C) 2026 CWM Team All rights reserved</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>info@christianwebministries.org</authorEmail>
     <authorUrl>https://www.christianwebministries.org</authorUrl>
-    <version>1.1.0</version>
+    <version>1.1.5</version>
     <description>PLG_CONTENT_SCRIPTURELINKS_DESCRIPTION</description>
     <namespace path="src">CWM\Plugin\Content\ScriptureLinks</namespace>
     <scriptfile>script.php</scriptfile>
