@@ -9,8 +9,62 @@
         "extensions": []
     },
     "build": {
-        "command": "php build/build-package.php",
+        "command":    "cwm-package",
         "outputGlob": "build/dist/pkg_cwmscripture-*.zip"
+    },
+    "package": {
+        "manifest":    "build/pkg_cwmscripture.xml",
+        "outputDir":   "build/dist",
+        "outputName":  "pkg_cwmscripture-{version}.zip",
+        "innerLayout": "root",
+        "includes": [
+            {
+                "type":       "prebuilt",
+                "distGlob":   "libraries/lib_cwmscripture/build/dist/lib_cwmscripture-*.zip",
+                "outputName": "lib_cwmscripture.zip"
+            },
+            {
+                "type":       "inline",
+                "outputName": "plg_content_scripturelinks.zip",
+                "config": {
+                    "outputDir":  "build/dist",
+                    "outputName": "plg_content_scripturelinks.zip",
+                    "manifest":   "scripturelinks.xml",
+                    "scriptFile": "script.php",
+                    "sources": [
+                        { "from": "src",      "to": "src" },
+                        { "from": "services", "to": "services" },
+                        { "from": "language", "to": "language" },
+                        { "from": "tmpl",     "to": "tmpl" }
+                    ],
+                    "excludes": [".git", ".DS_Store", ".idea", "node_modules"]
+                }
+            },
+            {
+                "type":       "inline",
+                "outputName": "plg_task_cwmscripture.zip",
+                "config": {
+                    "outputDir":  "build/dist",
+                    "outputName": "plg_task_cwmscripture.zip",
+                    "manifest":   "plg_task_cwmscripture/cwmscripture.xml",
+                    "scriptFile": "plg_task_cwmscripture/script.php",
+                    "sources": [
+                        { "from": "plg_task_cwmscripture/src",      "to": "src" },
+                        { "from": "plg_task_cwmscripture/services", "to": "services" },
+                        { "from": "plg_task_cwmscripture/language", "to": "language" }
+                    ],
+                    "excludes": [".git", ".DS_Store", ".idea", "node_modules"]
+                }
+            }
+        ],
+        "verify": {
+            "expectedEntries": [
+                "pkg_cwmscripture.xml",
+                "lib_cwmscripture.zip",
+                "plg_content_scripturelinks.zip",
+                "plg_task_cwmscripture.zip"
+            ]
+        }
     },
     "ars": {
         "endpoint": "https://www.christianwebministries.org",
