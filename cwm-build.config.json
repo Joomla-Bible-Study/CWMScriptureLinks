@@ -75,6 +75,13 @@
         "tokenVault": "CWM",
         "itemDescription": "CWM Scripture Links package — bundles the shared scripture library, the content plugin that processes {scripture}/{bible} tags in Joomla articles, and the task plugin for background translation downloads."
     },
+    "versionTracking": {
+        "substituteTokens": {
+            "token":      "__DEPLOY_VERSION__",
+            "paths":      ["libraries/", "src/", "plg_task_cwmscripture/"],
+            "extensions": ["php"]
+        }
+    },
     "github": {
         "owner": "Joomla-Bible-Study",
         "repo": "CWMScriptureLinks",
