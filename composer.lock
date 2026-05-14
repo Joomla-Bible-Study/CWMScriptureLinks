@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c677fa0762a3d58d5b8931af77cf0e20",
+    "content-hash": "7073007d9830b05bcb67b20e372b5f11",
     "packages": [],
     "packages-dev": [
         {
@@ -295,16 +295,16 @@
         },
         {
             "name": "cwm/build-tools",
-            "version": "v0.5.4-alpha",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools.git",
-                "reference": "252c07cbbf92b20e5f6d933bdfc37646dac58d3d"
+                "reference": "6458fd4a6f6a69e6ce40f04eb1942ecf13a00fd2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/252c07cbbf92b20e5f6d933bdfc37646dac58d3d",
-                "reference": "252c07cbbf92b20e5f6d933bdfc37646dac58d3d",
+                "url": "https://api.github.com/repos/Joomla-Bible-Study/cwm-build-tools/zipball/6458fd4a6f6a69e6ce40f04eb1942ecf13a00fd2",
+                "reference": "6458fd4a6f6a69e6ce40f04eb1942ecf13a00fd2",
                 "shasum": ""
             },
             "require": {
@@ -389,10 +389,10 @@
                 "release"
             ],
             "support": {
-                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v0.5.4-alpha",
+                "source": "https://github.com/Joomla-Bible-Study/cwm-build-tools/tree/v1.0.0",
                 "issues": "https://github.com/Joomla-Bible-Study/cwm-build-tools/issues"
             },
-            "time": "2026-05-11T16:13:23+00:00"
+            "time": "2026-05-14T20:41:05+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
@@ -4450,9 +4450,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "cwm/build-tools": 15
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
