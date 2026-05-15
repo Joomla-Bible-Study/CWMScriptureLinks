@@ -8,9 +8,17 @@
     "php": ">=8.4"
   },
   "require-dev": {
-    "cwm/build-tools": "^1.0",
+    "cwm/build-tools": "^1.1",
     "friendsofphp/php-cs-fixer": "^3.0",
     "phpunit/phpunit": "^12.5"
+  },
+  "extra": {
+    "cwm-build-tools": {
+      "joomlaLinks": [
+        { "type": "plugin", "group": "content", "element": "scripturelinks" },
+        { "type": "plugin", "group": "task",    "element": "cwmscripture"   }
+      ]
+    }
   },
   "repositories": [
     {
