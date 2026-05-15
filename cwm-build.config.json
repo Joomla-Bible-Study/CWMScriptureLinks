@@ -3,6 +3,7 @@
         "type": "package",
         "name": "pkg_cwmscripture"
     },
+    "profile": "package-wrapper",
     "manifests": {
         "_comment": "Sub-extensions are versioned independently: the library lives in its own submodule/repo and bumps on its own cadence (lib v1.1.3 != package v1.1.4); the plugins only bump when their code actually changes. cwm-bump from this repo therefore only touches the package wrapper manifest below. To bump the library, run the bump from its own repo; to bump a plugin, edit its manifest directly.",
         "package": "build/pkg_cwmscripture.xml",
@@ -75,11 +76,10 @@
         "tokenVault": "CWM",
         "itemDescription": "CWM Scripture Links package — bundles the shared scripture library, the content plugin that processes {scripture}/{bible} tags in Joomla articles, and the task plugin for background translation downloads."
     },
+    "_versionTracking_comment": "Override on top of the 'package-wrapper' profile. Lists replace wholesale, so paths fully redefines the scan roots (profile default is just src/ + language/).",
     "versionTracking": {
         "substituteTokens": {
-            "token":      "__DEPLOY_VERSION__",
-            "paths":      ["libraries/", "src/", "plg_task_cwmscripture/"],
-            "extensions": ["php"]
+            "paths": ["libraries/", "src/", "plg_task_cwmscripture/"]
         }
     },
     "github": {
