@@ -71,7 +71,10 @@ jobs:
           composer install --no-interaction --prefer-dist
           npm ci
           npm run build
-          php build/build-package.php
+          # The lib moved its packaging to cwm-build; build/build-package.php
+          # no longer exists there. This produces the lib zip that the outer
+          # `composer build` consumes as a prebuilt include.
+          composer build:package
 
       - name: Build full package
         run: composer build
