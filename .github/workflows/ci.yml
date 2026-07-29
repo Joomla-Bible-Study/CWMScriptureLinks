@@ -1,5 +1,14 @@
 name: CI
 
+# The build, lint and test steps live in cwm-build-tools so every CWM
+# extension runs the same pipeline and a fix lands everywhere at once. What
+# stays here is what is genuinely this repository's own: when CI runs, and
+# the handful of values that differ from the shared defaults.
+#
+# The reusable workflow is .github/workflows/joomla-package-ci.yml in
+# Joomla-Bible-Study/cwm-build-tools. To see what the inputs do, or to change
+# a step, edit it there.
+
 on:
   push:
     branches: [ "main", "master", "development" ]
@@ -13,85 +22,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_OPTIONS: --disable-warning=DEP0040
-
 jobs:
-  php-checks:
+  ci:
     name: PHP Lint & Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository (with submodules)
-        uses: actions/checkout@v6
-        with:
-          submodules: recursive
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, json, xml, zip, curl
-          coverage: none
-          tools: composer:v2
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: libraries/lib_cwmscripture/package-lock.json
-
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Check PHP syntax
-        run: composer lint:syntax
-
-      - name: Run PHP CS Fixer (dry-run)
-        run: composer lint
-
-      - name: Run PHPUnit
-        run: composer test
-
-      - name: Build scripture library dependency
-        run: |
-          cd libraries/lib_cwmscripture
-          composer install --no-interaction --prefer-dist
-          npm ci
-          npm run build
-          # The lib moved its packaging to cwm-build; build/build-package.php
-          # no longer exists there. This produces the lib zip that the outer
-          # `composer build` consumes as a prebuilt include.
-          composer build:package
-
-      - name: Build full package
-        run: composer build
-
-      - name: List package contents
-        run: |
-          VERSION=$(php -r '$x = simplexml_load_file("build/pkg_cwmscripture.xml"); echo (string) $x->version;')
-          PKG="build/dist/pkg_cwmscripture-$VERSION.zip"
-          test -f "$PKG" || { echo "Package not built: $PKG"; exit 1; }
-          echo "Package contents:"
-          unzip -l "$PKG"
-        # Inner-entry verification lives in build/build-package.php so the build
-        # itself fails fast on missing files; CI just lists for log visibility.
-
-      - name: Upload package artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: pkg_cwmscripture
-          path: build/dist/pkg_cwmscripture-*.zip
-          retention-days: 7
+    # `v1` is a moving tag on cwm-build-tools, re-pointed at each release — the
+    # CI equivalent of the `^1.9.0` Composer constraint in composer.json.
+    uses: Joomla-Bible-Study/cwm-build-tools/.github/workflows/joomla-package-ci.yml@v1
+    with:
+      # This project tracks 8.4; the shared default is 8.3.
+      php-version: '8.4'
+      node-version: '24'
+      # The scripture library is a submodule, and the package embeds it.
+      submodules: 'recursive'
+      # Built first, as a prebuilt include the outer package consumes.
+      lib-path: 'libraries/lib_cwmscripture'
+      build-command: 'composer build'
+      package-glob: 'build/dist/pkg_cwmscripture-*.zip'
