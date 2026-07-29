@@ -91,6 +91,46 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
     }
 
     /**
+     * Does this SQL contain an executable DROP TABLE?
+     *
+     * The distinction matters: the already-disarmed 1.1.5 and 1.1.6 files
+     * *describe* the old behaviour in prose, so they contain the words "DROP
+     * TABLE" inside `--` comments. A naive substring search flags them as
+     * dangerous and rewrites files that are perfectly fine — so only lines that
+     * are not comments count.
+     *
+     * Deliberately conservative: a trailing `-- DROP TABLE` comment on a real
+     * statement line reads as armed. Rewriting an already-safe file costs
+     * nothing; missing a live one costs the site its Bibles.
+     *
+     * @param   string  $sql  Contents of an uninstall SQL file
+     *
+     * @return  bool  True when at least one executable DROP TABLE is present
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    public static function sqlIsArmed(string $sql): bool
+    {
+        if (stripos($sql, 'DROP TABLE') === false) {
+            return false;
+        }
+
+        foreach (preg_split('/\R/', $sql) ?: [] as $line) {
+            $line = trim($line);
+
+            if ($line === '' || str_starts_with($line, '--')) {
+                continue;
+            }
+
+            if (stripos($line, 'DROP TABLE') !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Blank the scripture library's legacy, destructive uninstall SQL.
      *
      * Rewrites rather than deletes: an older manifest still references the file
@@ -111,29 +151,7 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
 
         $contents = @file_get_contents($sqlFile);
 
-        if ($contents === false || stripos($contents, 'DROP TABLE') === false) {
-            return;
-        }
-
-        // Only executable statements matter — a mention inside a -- comment is
-        // the already-disarmed file describing itself.
-        $armed = false;
-
-        foreach (explode("\n", $contents) as $line) {
-            $line = trim($line);
-
-            if ($line === '' || str_starts_with($line, '--')) {
-                continue;
-            }
-
-            if (stripos($line, 'DROP TABLE') !== false) {
-                $armed = true;
-
-                break;
-            }
-        }
-
-        if (!$armed) {
+        if ($contents === false || !self::sqlIsArmed($contents)) {
             return;
         }
 
