@@ -56,6 +56,21 @@
                     ],
                     "excludes": [".git", ".DS_Store", ".idea", "node_modules"]
                 }
+            },
+            {
+                "type":       "inline",
+                "outputName": "plg_system_cwmscripture.zip",
+                "config": {
+                    "outputDir":  "build/dist",
+                    "outputName": "plg_system_cwmscripture.zip",
+                    "manifest":   "plg_system_cwmscripture/cwmscripture.xml",
+                    "sources": [
+                        { "from": "plg_system_cwmscripture/src",      "to": "src" },
+                        { "from": "plg_system_cwmscripture/services", "to": "services" },
+                        { "from": "plg_system_cwmscripture/language", "to": "language" }
+                    ],
+                    "excludes": [".git", ".DS_Store", ".idea", "node_modules"]
+                }
             }
         ],
         "verify": {
@@ -63,7 +78,8 @@
                 "pkg_cwmscripture.xml",
                 "lib_cwmscripture.zip",
                 "plg_content_scripturelinks.zip",
-                "plg_task_cwmscripture.zip"
+                "plg_task_cwmscripture.zip",
+                "plg_system_cwmscripture.zip"
             ]
         }
     },

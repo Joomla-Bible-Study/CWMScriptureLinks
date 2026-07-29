@@ -22,5 +22,6 @@
         <file type="library" id="cwmscripture">lib_cwmscripture.zip</file>
         <file type="plugin" group="content" id="scripturelinks">plg_content_scripturelinks.zip</file>
         <file type="plugin" group="task" id="cwmscripture">plg_task_cwmscripture.zip</file>
+        <file type="plugin" group="system" id="cwmscripture">plg_system_cwmscripture.zip</file>
     </files>
 </extension>
