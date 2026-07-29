@@ -18,6 +18,7 @@
         "outputDir":   "build/dist",
         "outputName":  "pkg_cwmscripture-{version}.zip",
         "innerLayout": "root",
+        "installer":   "build/script.install.php",
         "includes": [
             {
                 "type":       "prebuilt",
@@ -76,6 +77,7 @@
         "verify": {
             "expectedEntries": [
                 "pkg_cwmscripture.xml",
+                "script.install.php",
                 "lib_cwmscripture.zip",
                 "plg_content_scripturelinks.zip",
                 "plg_task_cwmscripture.zip",

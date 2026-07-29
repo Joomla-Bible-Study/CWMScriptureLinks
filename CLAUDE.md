@@ -69,3 +69,20 @@ All use `CREATE TABLE IF NOT EXISTS` for safe coexistence with existing Proclaim
 ## Build
 
 Run `php build/build.php` to create the distributable `pkg_cwmscripture-{version}.zip`. The build script pulls the library from the submodule directory. Tests live in the `lib_cwmscripture` repo.
+
+### Package scriptfile
+
+`build/script.install.php` is the package's install script (wired via `<scriptfile>`
+in `build/pkg_cwmscripture.xml` and `package.installer` in `cwm-build.config.json`).
+
+Its one job is to blank `JPATH_LIBRARIES/cwmscripture/sql/uninstall.mysql.utf8.sql`
+in `preflight()`, before the library child installs. lib_cwmscripture ≤ 1.1.4
+declared `<uninstall><sql>` pointing at `DROP TABLE` statements, and Joomla's
+`LibraryAdapter` uninstalls the installed library on every update — so those DROPs
+ran on upgrades and wiped every locally downloaded Bible translation. The library
+no longer declares uninstall SQL, but Joomla reads the *installed* manifest and SQL
+file during that uninstall, so only a package-level preflight can save an existing
+site on the transition upgrade.
+
+Bump the nested `libraries/lib_cwmscripture` submodule to a version ≥ the fix, or
+this package keeps reinstalling the destructive manifest on disk.
