@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>plg_system_cwmscripture</name>
+    <author>CWM Team</author>
+    <authorEmail>info@christianwebministries.org</authorEmail>
+    <authorUrl>https://www.christianwebministries.org</authorUrl>
+    <copyright>(C) 2026 CWM Team All rights reserved</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <version>1.1.6</version>
+    <creationDate>July 2026</creationDate>
+    <description>PLG_SYSTEM_CWMSCRIPTURE_XML_DESCRIPTION</description>
+    <namespace path="src">CWM\Plugin\System\Cwmscripture</namespace>
+
+    <files>
+        <folder plugin="cwmscripture">services</folder>
+        <folder>src</folder>
+        <folder>language</folder>
+    </files>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_cwmscripture.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_cwmscripture.sys.ini</language>
+    </languages>
+</extension>

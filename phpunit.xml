@@ -13,6 +13,7 @@
         <include>
             <directory>src</directory>
             <directory>plg_task_cwmscripture/src</directory>
+            <directory>plg_system_cwmscripture/src</directory>
         </include>
     </source>
 </phpunit>

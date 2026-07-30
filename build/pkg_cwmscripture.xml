@@ -11,6 +11,16 @@
     <version>1.1.5</version>
     <description>CWM Scripture package: Bible provider library, content plugin for automatic scripture linking, and task plugin for deferred background scripture work.</description>
 
+    <scriptfile>script.install.php</scriptfile>
+
+    <!--
+        Children may not be uninstalled individually. lib_cwmscripture is a
+        dependency of the plugins shipped here (and of com_proclaim), so pulling
+        it out on its own leaves them calling classes that no longer exist.
+        Matches pkg_proclaim.xml.
+    -->
+    <blockChildUninstall>true</blockChildUninstall>
+
     <changelogurl>https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml</changelogurl>
 
     <updateservers>
@@ -22,5 +32,6 @@
         <file type="library" id="cwmscripture">lib_cwmscripture.zip</file>
         <file type="plugin" group="content" id="scripturelinks">plg_content_scripturelinks.zip</file>
         <file type="plugin" group="task" id="cwmscripture">plg_task_cwmscripture.zip</file>
+        <file type="plugin" group="system" id="cwmscripture">plg_system_cwmscripture.zip</file>
     </files>
 </extension>

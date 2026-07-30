@@ -1,66 +1,78 @@
 {
-  "name": "cwm/scripture-links",
-  "description": "CWM Scripture Links - Content plugin for automatic scripture linking in Joomla 5/6",
-  "type": "joomla-package",
-  "license": "GPL-2.0-or-later",
-  "homepage": "https://www.christianwebministries.org",
-  "require": {
-    "php": ">=8.4"
-  },
-  "require-dev": {
-    "cwm/build-tools": "^1.9.0",
-    "friendsofphp/php-cs-fixer": "^3.0",
-    "phpunit/phpunit": "^12.5"
-  },
-  "extra": {
-    "cwm-build-tools": {
-      "joomlaLinks": [
-        { "type": "plugin", "group": "content", "element": "scripturelinks" },
-        { "type": "plugin", "group": "task",    "element": "cwmscripture"   }
-      ]
+    "name": "cwm/scripture-links",
+    "description": "CWM Scripture Links - Content plugin for automatic scripture linking in Joomla 5/6",
+    "type": "joomla-package",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.christianwebministries.org",
+    "require": {
+        "php": ">=8.4"
+    },
+    "require-dev": {
+        "cwm/build-tools": "^1.9.0",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^12.5"
+    },
+    "extra": {
+        "cwm-build-tools": {
+            "joomlaLinks": [
+                {
+                    "type": "plugin",
+                    "group": "content",
+                    "element": "scripturelinks"
+                },
+                {
+                    "type": "plugin",
+                    "group": "task",
+                    "element": "cwmscripture"
+                }
+            ]
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CWM\\Library\\Scripture\\": "libraries/lib_cwmscripture/src/",
+            "CWM\\Plugin\\Content\\ScriptureLinks\\": "src/",
+            "CWM\\Plugin\\Task\\Cwmscripture\\": "plg_task_cwmscripture/src/",
+            "CWM\\Plugin\\System\\Cwmscripture\\": "plg_system_cwmscripture/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CWM\\ScriptureLinks\\Tests\\": "tests/unit/"
+        }
+    },
+    "scripts": {
+        "build": "cwm-package",
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite unit",
+        "lint": "php-cs-fixer fix --dry-run --diff",
+        "lint:fix": "php-cs-fixer fix",
+        "lint:syntax": "find src plg_task_cwmscripture -type f -name '*.php' -print0 | xargs -0 -n 1 -P 8 php -l > /dev/null",
+        "check": [
+            "@lint:syntax",
+            "@lint",
+            "@test"
+        ],
+        "release": "cwm-release",
+        "bump-version": "cwm-bump",
+        "package": "cwm-package",
+        "ars-publish": "cwm-ars-publish",
+        "ars-list": "cwm-ars-list",
+        "changelog": "cwm-changelog",
+        "sync-configs": "cwm-sync-configs",
+        "sync-languages": "cwm-sync-languages",
+        "setup": "cwm-setup",
+        "link": "cwm-link",
+        "link-check": "cwm-link-check",
+        "clean": "cwm-clean",
+        "verify": "cwm-verify",
+        "joomla-install": "cwm-joomla-install",
+        "joomla-latest": "cwm-joomla-latest"
     }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/Joomla-Bible-Study/cwm-build-tools"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "CWM\\Library\\Scripture\\": "libraries/lib_cwmscripture/src/",
-      "CWM\\Plugin\\Content\\ScriptureLinks\\": "src/",
-      "CWM\\Plugin\\Task\\Cwmscripture\\": "plg_task_cwmscripture/src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "CWM\\ScriptureLinks\\Tests\\": "tests/unit/"
-    }
-  },
-  "scripts": {
-    "build":           "cwm-package",
-    "test":            "phpunit",
-    "test:unit":       "phpunit --testsuite unit",
-    "lint":            "php-cs-fixer fix --dry-run --diff",
-    "lint:fix":        "php-cs-fixer fix",
-    "lint:syntax":     "find src plg_task_cwmscripture -type f -name '*.php' -print0 | xargs -0 -n 1 -P 8 php -l > /dev/null",
-    "check":           ["@lint:syntax", "@lint", "@test"],
-    "release":         "cwm-release",
-    "bump-version":    "cwm-bump",
-    "package":         "cwm-package",
-    "ars-publish":     "cwm-ars-publish",
-    "ars-list":        "cwm-ars-list",
-    "changelog":       "cwm-changelog",
-    "sync-configs":    "cwm-sync-configs",
-    "sync-languages":  "cwm-sync-languages",
-
-    "setup":           "cwm-setup",
-    "link":            "cwm-link",
-    "link-check":      "cwm-link-check",
-    "clean":           "cwm-clean",
-    "verify":          "cwm-verify",
-    "joomla-install":  "cwm-joomla-install",
-    "joomla-latest":   "cwm-joomla-latest"
-  }
 }
