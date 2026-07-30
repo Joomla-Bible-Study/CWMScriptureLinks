@@ -24,7 +24,7 @@
     <changelogurl>https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml</changelogurl>
 
     <updateservers>
-        <server type="extension" name="CWM Scripture Package">https://www.christianwebministries.org/index.php?option=com_ars&amp;view=update&amp;format=xml&amp;id=4</server>
+        <server type="extension" name="CWM Scripture Package">https://www.christianwebministries.org/index.php?option=com_ars&amp;view=update&amp;task=stream&amp;format=xml&amp;id=4&amp;dummy=extension.xml</server>
     </updateservers>
 
     <files>
