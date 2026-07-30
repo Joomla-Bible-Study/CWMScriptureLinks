@@ -2,9 +2,14 @@
 <!--
     Joomla update changelog for pkg_cwmscripture.
 
-    New entries are inserted at the top by `composer changelog -- <version>`,
-    which fetches the GitHub release notes for the tag and converts headings
-    (### Fixes, ### Features, ### Changes, etc.) into Joomla changelog types.
+    New entries are inserted at the top by the `composer changelog` script
+    (pass the version after a bare double dash), which fetches the GitHub
+    release notes for the tag and converts headings (### Fixes, ### Features,
+    ### Changes, etc.) into Joomla changelog types.
+
+    Do not write that separator literally here: XML forbids a double hyphen
+    inside a comment, and doing so made this entire file unparseable, so
+    Joomla displayed no changelog at all.
 
     Hosted at:
     https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml
