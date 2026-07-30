@@ -57,6 +57,9 @@ return new class () implements InstallerScriptInterface {
             // Silent — plugin row may not exist yet during discover install.
         }
 
+        // Declare our dependency on lib_cwmscripture
+        $this->consumer('register');
+
         return true;
     }
 
@@ -77,6 +80,44 @@ return new class () implements InstallerScriptInterface {
 
     public function uninstall(InstallerAdapter $adapter): bool
     {
+        $this->consumer('unregister');
+
         return true;
+    }
+
+    /**
+     * Declare, or withdraw, this plugin's dependency on lib_cwmscripture.
+     *
+     * Joomla tracks no dependencies between extensions, so the library cannot
+     * discover who relies on it. Registering means the library refuses to be
+     * uninstalled while we are installed, and the shared #__bsms_bible_* tables
+     * are not dropped while we still read them.
+     *
+     * The library's own entry point handles autoloading, version tolerance and
+     * error handling, so this stays two lines. Note the group is part of the
+     * registry key — a plugin registered without it never matches on lookup.
+     *
+     * @param   string  $action  'register' on install/update, 'unregister' on removal
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private function consumer(string $action): void
+    {
+        if (!is_file($helper = JPATH_LIBRARIES . '/cwmscripture/src/consumer.php')) {
+            return;
+        }
+
+        $registry = require $helper;
+
+        // Not one dynamic call: unregister() takes no display name.
+        if ($action === 'register') {
+            $registry->register('scripturelinks', 'plugin', 'content', 'Scripture Links (plg_content_scripturelinks)');
+
+            return;
+        }
+
+        $registry->unregister('scripturelinks', 'plugin', 'content');
     }
 };
