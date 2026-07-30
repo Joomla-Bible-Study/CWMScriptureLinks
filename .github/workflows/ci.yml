@@ -27,7 +27,7 @@ jobs:
     name: PHP Lint & Tests
     # `v1` is a moving tag on cwm-build-tools, re-pointed at each release — the
     # CI equivalent of the `^1.9.0` Composer constraint in composer.json.
-    uses: Joomla-Bible-Study/cwm-build-tools/.github/workflows/joomla-package-ci.yml@v1
+    uses: Joomla-Bible-Study/cwm-build-tools/.github/workflows/joomla-package-ci.yml@v1.9.1
     with:
       # This project tracks 8.4; the shared default is 8.3.
       php-version: '8.4'
