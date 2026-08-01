@@ -24,6 +24,27 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.0                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.0</version>
+        <date>2026-08-01</date>
+        <note>
+            <item>chore: migrate to cwm-build-tools v0.5.x by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/6</item>
+            <item>chore(deps): adopt cwm/build-tools ^1.9.0 and resync the shared config by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/7</item>
+            <item>chore(submodule): bump lib_cwmscripture to build-tools-1.9.0 main by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/8</item>
+            <item>ci: call the shared joomla-package-ci workflow by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/10</item>
+            <item>feat: scripture protection plugin, package install script, and library bump to v1.1.6 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/13</item>
+            <item>fix(update): add task=stream to the ARS update server URL by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/14</item>
+            <item>fix(changelog): make the changelog file parseable again by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/15</item>
+            <item>chore(deps): update cwm/build-tools to v1.13.1 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/16</item>
+            <item>chore(ci): enable Dependabot version updates by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/17</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.1.5                                                    -->
     <!-- ============================================================ -->
     <changelog>
