@@ -24,6 +24,19 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.1                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.1</version>
+        <date>2026-08-08</date>
+        <note>
+            <item>chore: add missing trailing newline (PSR-12 / CS Fixer) by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/20</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.0                                                    -->
     <!-- ============================================================ -->
     <changelog>
