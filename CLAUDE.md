@@ -45,9 +45,17 @@ Namespace: `CWM\Plugin\Content\ScriptureLinks`
 
 Wraps both extensions. Library installs first (order in `<files>` matters).
 
-### Legacy Code (`Plugin/`)
+### Provenance
 
-The old Joomla 3 plugin by Mike Leeper. Dead code — kept for reference only. Not used by the new system.
+This extension **succeeds** the Joomla 3 ScriptureLinks plugin by Mike Leeper
+(`MLWebTechnologies/ScriptureLinks`, last commit 2015, JED listing last updated
+June 2016). It does not derive from it: the legacy `Plugin/` tree was removed in
+`a28a693`, and **no code from the original ships today** — the scripture engine,
+the tag handling and the provider system were all written here.
+
+That matters when describing the extension. It is a different codebase under a
+different name, targeting Joomla 5/6, with its own update server. Credit for the
+idea belongs upstream; the implementation does not come from there.
 
 ## Database Tables
 
