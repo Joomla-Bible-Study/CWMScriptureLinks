@@ -24,6 +24,22 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.2                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.2</version>
+        <date>2026-08-10</date>
+        <fix>
+            <item>Bible book names show as names rather than internal codes. A reference rendered as "JBS_BBK_JOHN 3" instead of "John 3" on any site without Proclaim installed, because the names lived in Proclaim's language file and this package had nothing to read them from. The names now ship with the scripture library itself</item>
+        </fix>
+        <change>
+            <item>Bundles CWM Scripture Library 1.1.10, up from 1.1.9</item>
+        </change>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.1                                                    -->
     <!-- ============================================================ -->
     <changelog>
