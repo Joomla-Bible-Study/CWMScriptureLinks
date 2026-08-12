@@ -21,9 +21,12 @@
         "installer":   "build/script.install.php",
         "includes": [
             {
-                "type":       "prebuilt",
-                "distGlob":   "libraries/lib_cwmscripture/build/dist/lib_cwmscripture-*.zip",
-                "outputName": "lib_cwmscripture.zip"
+                "_comment":    "subBuild, not prebuilt: prebuilt only globs build/dist and breaks ties by mtime, so the package bundled whatever library zip was last written rather than the pinned submodule commit — 1.2.2 shipped lib 1.1.10 that way (issue #23). subBuild runs the library's own build first, so the just-produced zip is newest by construction and the bundle always derives from the pin. distGlob is relative to `path` here, unlike prebuilt.",
+                "type":        "subBuild",
+                "path":        "libraries/lib_cwmscripture",
+                "buildScript": "vendor/cwm/build-tools/scripts/build.php",
+                "distGlob":    "build/dist/lib_cwmscripture-*.zip",
+                "outputName":  "lib_cwmscripture.zip"
             },
             {
                 "type":       "inline",
