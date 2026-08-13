@@ -24,6 +24,19 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.4                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.4</version>
+        <date>2026-08-13</date>
+        <note>
+            <item>chore: pin lib_cwmscripture to v1.1.12 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/25</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.3                                                    -->
     <!-- ============================================================ -->
     <changelog>
