@@ -24,6 +24,19 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.7                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.7</version>
+        <date>2026-08-13</date>
+        <note>
+            <item>fix: date the package installer&#x27;s @since tags to 1.2.0 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/35</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.6                                                    -->
     <!-- ============================================================ -->
     <changelog>
