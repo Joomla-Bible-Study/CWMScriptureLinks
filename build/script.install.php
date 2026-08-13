@@ -264,7 +264,18 @@ return new class () implements InstallerScriptInterface {
 
         $buffer = @file_get_contents($sqlFile);
 
-        if ($buffer === false || stripos($buffer, 'DROP TABLE') === false) {
+        if ($buffer === false) {
+            return;
+        }
+
+        // Comments stripped before looking for the statement, so the phrase in
+        // prose does not count. The replacement written below documents itself
+        // with the words "DROP TABLE", as does the file the library ships now,
+        // so matching the raw buffer meant rewriting files that were already
+        // harmless on every install.
+        $statements = preg_replace(['~/\*.*?\*/~s', '~^\s*--.*$~m'], '', $buffer);
+
+        if ($statements === null || stripos($statements, 'DROP TABLE') === false) {
             return;
         }
 
