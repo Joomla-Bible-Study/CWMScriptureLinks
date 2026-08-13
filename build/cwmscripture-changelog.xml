@@ -24,6 +24,24 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.6                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.6</version>
+        <date>2026-08-13</date>
+        <note>
+            <item>fix: scan every shipped root for @since, and stop at the submodule boundary by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/28</item>
+            <item>fix: refresh the vendored build tools so the installer is substituted by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/30</item>
+            <item>fix(install): stop the DROP TABLE guard matching the phrase in a comment by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/31</item>
+            <item>chore: refresh cwm/build-tools to 1.17.0 for the artifact token gate by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/32</item>
+            <item>chore: move to build-tools 1.18.0 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/33</item>
+            <item>chore: refresh cwm/build-tools to 1.19.0 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/34</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.5                                                    -->
     <!-- ============================================================ -->
     <changelog>
