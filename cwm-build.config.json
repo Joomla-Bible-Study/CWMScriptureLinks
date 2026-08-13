@@ -97,10 +97,18 @@
         "tokenVault": "CWM",
         "itemDescription": "CWM Scripture Links package — bundles the shared scripture library, the content plugin that processes {scripture}/{bible} tags in Joomla articles, and the task plugin for background translation downloads."
     },
-    "_versionTracking_comment": "Override on top of the 'package-wrapper' profile. Lists replace wholesale, so paths fully redefines the scan roots (profile default is just src/ + language/).",
+    "_versionTracking_comment": "Override on top of the 'package-wrapper' profile. Lists replace wholesale, so paths fully redefines the scan roots (profile default is just src/ + language/) — every root this repo ships must be named here or its @since tags ship as the literal token. Paths resolve from the repo root, so a sub-extension's own src/ is NOT covered by the bare 'src/' entry; that is how plg_system_cwmscripture shipped five placeholders through 1.2.5 (#27). libraries/ is deliberately absent: it is the lib_cwmscripture submodule, which substitutes its own tree during its own release — listing it here stamped library files with this package's version, a version that repo has never had. build/ and .php-cs-fixer.dist.php stay out as tooling, not shipped code.",
     "versionTracking": {
         "substituteTokens": {
-            "paths": ["libraries/", "src/", "plg_task_cwmscripture/"]
+            "paths": [
+                "script.php",
+                "src/",
+                "services/",
+                "language/",
+                "plg_system_cwmscripture/",
+                "plg_task_cwmscripture/",
+                "tests/"
+            ]
         }
     },
     "github": {

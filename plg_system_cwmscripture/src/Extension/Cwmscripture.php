@@ -50,7 +50,7 @@ use Joomla\Event\SubscriberInterface;
  * One-shot: once the file holds no statements the check short-circuits and this
  * costs a single is_file()/strpos() per admin installer page load.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.2.0
  */
 final class Cwmscripture extends CMSPlugin implements SubscriberInterface
 {
@@ -59,7 +59,7 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
      *
      * @return  array<string, string>
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.0
      */
     public static function getSubscribedEvents(): array
     {
@@ -73,7 +73,7 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.0
      */
     public function onAfterRoute(): void
     {
@@ -107,7 +107,7 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
      *
      * @return  bool  True when at least one executable DROP TABLE is present
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.0
      */
     public static function sqlIsArmed(string $sql): bool
     {
@@ -139,7 +139,7 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.0
      */
     private function disarmLegacyScriptureUninstallSql(): void
     {

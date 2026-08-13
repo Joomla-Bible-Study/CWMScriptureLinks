@@ -101,7 +101,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  void
      *
-     * @since   __DEPLOY_VERSION__
+     * @since   1.2.0
      */
     private function consumer(string $action): void
     {
