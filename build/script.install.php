@@ -6,7 +6,7 @@
  * @package    CWM.ScriptureLinks
  * @copyright  (C) 2026 CWM Team All rights reserved
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
- * @since      __DEPLOY_VERSION__
+ * @since      1.2.6
  */
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -26,7 +26,7 @@ use Joomla\Database\DatabaseInterface;
  * Joomla 5+ expects the script file to return an InstallerScriptInterface
  * instance directly (not define a named class).
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.2.6
  */
 return new class () implements InstallerScriptInterface {
     /**
@@ -37,7 +37,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  bool  True to continue, false to abort
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     public function preflight(string $type, InstallerAdapter $adapter): bool
     {
@@ -55,7 +55,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  bool
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     public function postflight(string $type, InstallerAdapter $adapter): bool
     {
@@ -84,7 +84,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     private function enablePlugin(string $element, string $group): void
     {
@@ -115,7 +115,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  bool
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     public function install(InstallerAdapter $adapter): bool
     {
@@ -129,7 +129,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  bool
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     public function update(InstallerAdapter $adapter): bool
     {
@@ -143,7 +143,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  bool
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     public function uninstall(InstallerAdapter $adapter): bool
     {
@@ -175,7 +175,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     private function dropScriptureTablesIfLastConsumer(): void
     {
@@ -252,7 +252,7 @@ return new class () implements InstallerScriptInterface {
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.6
      */
     private function disarmLegacyScriptureUninstallSql(): void
     {
