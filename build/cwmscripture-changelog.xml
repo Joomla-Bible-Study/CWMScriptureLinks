@@ -24,6 +24,22 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.3                                                    -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.3</version>
+        <date>2026-08-13</date>
+        <note>
+            <item>chore: pin lib_cwmscripture to b03727d for the shared book-code table (#1688) by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/21</item>
+            <item>chore: pin lib_cwmscripture to 7403d62 (#1688) by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/22</item>
+            <item>chore(deps-dev): Bump friendsofphp/php-cs-fixer from 3.95.17 to 3.95.18 in the composer-minor-and-patch group across 1 directory by @dependabot[bot] in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/19</item>
+            <item>fix: build the bundled library from the pinned commit, not the newest zip on disk by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/24</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.2                                                    -->
     <!-- ============================================================ -->
     <changelog>
