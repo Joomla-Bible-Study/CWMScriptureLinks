@@ -3,12 +3,12 @@
     <name>pkg_cwmscripture</name>
     <packagename>cwmscripture</packagename>
     <author>CWM Team</author>
-    <creationDate>2026-08-13</creationDate>
+    <creationDate>2026-08-14</creationDate>
     <copyright>(C) 2026 CWM Team All rights reserved</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>info@christianwebministries.org</authorEmail>
     <authorUrl>https://www.christianwebministries.org</authorUrl>
-    <version>1.2.9</version>
+    <version>1.2.10</version>
     <description>CWM Scripture package: Bible provider library, content plugin for automatic scripture linking, and task plugin for deferred background scripture work.</description>
 
     <scriptfile>script.install.php</scriptfile>
