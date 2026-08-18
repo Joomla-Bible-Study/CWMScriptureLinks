@@ -114,4 +114,103 @@ SQL;
             'A file saved with CRLF endings is just as dangerous.'
         );
     }
+
+    /**
+     * Both headless installer events must be subscribed.
+     *
+     * ⚠️ onExtensionBeforeUpdate is the one that matters and the one easiest to
+     * leave out. The Update Manager calls Installer::update(), which dispatches
+     * that event *only*; InstallerAdapter::update() then calls install(), where
+     * checkExtensionInFilesystem() uninstalls the old library and runs its
+     * armed SQL. A fix subscribing to onExtensionBeforeInstall alone passes
+     * every other test here and covers none of Proclaim#1864.
+     */
+    public function testHeadlessInstallerEventsAreSubscribed(): void
+    {
+        $events = Cwmscripture::getSubscribedEvents();
+
+        self::assertArrayHasKey(
+            'onExtensionBeforeUpdate',
+            $events,
+            'The Update Manager and every headless update runner dispatch this one.'
+        );
+        self::assertArrayHasKey(
+            'onExtensionBeforeInstall',
+            $events,
+            'A manual zip install over an existing library takes this one.'
+        );
+
+        self::assertSame(
+            $events['onExtensionBeforeUpdate'],
+            $events['onExtensionBeforeInstall'],
+            'Both should reach the same ungated sweep.'
+        );
+
+        self::assertArrayHasKey(
+            'onAfterRoute',
+            $events,
+            'The interactive sweep is additive, not replaced: it also covers routes '
+            . 'that never reach Installer::install().'
+        );
+    }
+
+    /**
+     * The sweep must work with no application, session or input.
+     *
+     * This is what makes the headless subscription meaningful. If the sweep
+     * reached for application state it would subscribe fine and then fatal
+     * under CLI, which is the environment it exists for.
+     *
+     * The fixture is planted at the path the sweep actually reads --
+     * JPATH_LIBRARIES, fixed by tests/bootstrap.php -- rather than at a
+     * temporary directory the sweep would never look in. An earlier version of
+     * this test used a temp path, watched the sweep return early because no
+     * file was there, and reported a pass for the file it had not touched.
+     */
+    public function testSweepDisarmsAnArmedFileWithNoApplicationContext(): void
+    {
+        $dir  = JPATH_LIBRARIES . '/cwmscripture/sql';
+        $file = $dir . '/uninstall.mysql.utf8.sql';
+
+        // Never overwrite a real file: this repository does not ship one at
+        // that path, and if that ever changes the test should say so rather
+        // than quietly rewrite it.
+        self::assertFileDoesNotExist(
+            $file,
+            'This test plants its own fixture and would otherwise overwrite a real file.'
+        );
+
+        if (!mkdir($dir, 0o777, true) && !is_dir($dir)) {
+            self::fail('Could not create the fixture directory.');
+        }
+
+        try {
+            file_put_contents($file, self::ARMED_1_1_4);
+
+            self::assertTrue(
+                Cwmscripture::sqlIsArmed((string) file_get_contents($file)),
+                'The fixture must start armed, or this proves nothing.'
+            );
+
+            // No application, no session, no input — only the constant.
+            $plugin = (new \ReflectionClass(Cwmscripture::class))->newInstanceWithoutConstructor();
+            $plugin->onExtensionBeforeInstaller();
+
+            $after = (string) file_get_contents($file);
+
+            self::assertFalse(
+                Cwmscripture::sqlIsArmed($after),
+                'The armed file must be disarmed by the headless handler.'
+            );
+            self::assertStringNotContainsString(
+                'DROP TABLE IF EXISTS `#__bsms_bible_verses`;',
+                $after,
+                'The executable statement must be gone, not merely commented around.'
+            );
+        } finally {
+            @unlink($file);
+            @rmdir($dir);
+            @rmdir(\dirname($dir));
+        }
+    }
 }
