@@ -6,7 +6,7 @@
     <authorUrl>https://www.christianwebministries.org</authorUrl>
     <copyright>(C) 2026 CWM Team All rights reserved</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>1.1.6</version>
+    <version>1.1.7</version>
     <creationDate>July 2026</creationDate>
     <description>PLG_SYSTEM_CWMSCRIPTURE_XML_DESCRIPTION</description>
     <namespace path="src">CWM\Plugin\System\Cwmscripture</namespace>
