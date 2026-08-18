@@ -24,6 +24,22 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.11                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.11</version>
+        <date>2026-08-18</date>
+        <note>
+            <item>chore(build): delete orphaned build/sync_languages.py (#36) by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/37</item>
+            <item>chore: drop the database keys from the committed properties template by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/38</item>
+            <item>chore(deps): bump cwm/build-tools to ^1.27 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/39</item>
+            <item>fix(system): disarm the legacy scripture SQL on headless installs too by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/40</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.10                                                   -->
     <!-- ============================================================ -->
     <changelog>
