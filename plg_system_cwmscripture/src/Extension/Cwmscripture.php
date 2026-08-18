@@ -131,7 +131,7 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.11
      */
     public function onExtensionBeforeInstaller(): void
     {
