@@ -64,7 +64,33 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            // Fires while an administrator is on com_installer, before they
+            // click Update. Covers the interactive path, including routes that
+            // never reach Installer::install() at all.
             'onAfterRoute' => 'onAfterRoute',
+
+            // ⚠️ The headless paths, which the gated handler above cannot
+            // reach (Joomla-Bible-Study/Proclaim#1864).
+            //
+            // Both are dispatched by the Installer *library* rather than by
+            // com_installer, so they fire under CLI, cron, Panopticon and any
+            // remote update runner. ConsoleApplication imports the system
+            // plugin group at boot, so this plugin is subscribed there too.
+            //
+            // Both are needed, and which one matters is not obvious:
+            // the Update Manager calls Installer::update(), which dispatches
+            // onExtensionBeforeUpdate *only* — then InstallerAdapter::update()
+            // calls install(), which is where checkExtensionInFilesystem()
+            // uninstalls the old library and runs its armed SQL. Subscribing to
+            // onExtensionBeforeInstall alone would miss the exact path this is
+            // for; a manual zip install over an existing library takes the
+            // other.
+            //
+            // Both fire before $adapter->install(), which is the only window
+            // that helps: the new library's own preflight() runs *after*
+            // checkExtensionInFilesystem(), by which point the tables are gone.
+            'onExtensionBeforeUpdate'  => 'onExtensionBeforeInstaller',
+            'onExtensionBeforeInstall' => 'onExtensionBeforeInstaller',
         ];
     }
 
@@ -87,6 +113,28 @@ final class Cwmscripture extends CMSPlugin implements SubscriberInterface
             return;
         }
 
+        $this->disarmLegacyScriptureUninstallSql();
+    }
+
+    /**
+     * Disarm before the installer touches the library, headlessly.
+     *
+     * onAfterRoute cannot cover a CLI or cron update: it is gated on an
+     * administrator request to com_installer, and there is no request.
+     *
+     * Deliberately ungated. The sweep reads and writes one file under
+     * JPATH_LIBRARIES and consults no application state, so there is nothing
+     * here that needs a client, a session or an input. Running it once more
+     * than necessary costs a file read: {@see sqlIsArmed()} returns false for
+     * an already-disarmed file and the sweep returns early, so the interactive
+     * path disarming first simply makes this a no-op.
+     *
+     * @return  void
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    public function onExtensionBeforeInstaller(): void
+    {
         $this->disarmLegacyScriptureUninstallSql();
     }
 
