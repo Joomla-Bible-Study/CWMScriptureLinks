@@ -9,6 +9,7 @@
         "package": "build/pkg_cwmscripture.xml",
         "extensions": []
     },
+    "_schemaReplay_comment": "Deliberately absent. This repository ships no SQL at all \u2014 no .sql files, and none of scripturelinks.xml, the two plugin manifests or the package manifest declares <sql> or <schemapath>. The only <schemapath> anywhere in the tree belongs to libraries/lib_cwmscripture, a git submodule whose migrations are committed in that repository and gated by cwm-schema-replay there. Replaying them from here would run another project's code and duplicate its gate \u2014 the same ownership line vendor:check draws. Add a schemaReplay block if this repository ever ships a <schemapath> of its own.",
     "build": {
         "command":    "cwm-package",
         "outputGlob": "build/dist/pkg_cwmscripture-*.zip"
