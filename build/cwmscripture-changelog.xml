@@ -24,6 +24,23 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.12                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.12</version>
+        <date>2026-08-23</date>
+        <note>
+            <item>chore(deps): bump cwm/build-tools to ^1.28 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/41</item>
+            <item>chore(deps): bump cwm/build-tools to ^1.29 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/42</item>
+            <item>docs(config): record why there is no schemaReplay block here by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/43</item>
+            <item>chore(deps): bump cwm/build-tools to ^1.31 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/44</item>
+            <item>chore: move the bundled lib_cwmscripture to v1.1.19</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.11                                                   -->
     <!-- ============================================================ -->
     <changelog>
