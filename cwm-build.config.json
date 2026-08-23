@@ -120,5 +120,9 @@
     "changelog": {
         "file": "build/cwmscripture-changelog.xml",
         "url":  "https://raw.githubusercontent.com/Joomla-Bible-Study/CWMScriptureLinks/main/build/cwmscripture-changelog.xml"
+    },
+    "_release_comment": "ARS stores notes as an HTML fragment and echoes it into the public download page verbatim, so the auto-generated PR-title list is what a site administrator following a Joomla update link would otherwise read. Point cwm-release at a hand-written file instead. Written per release and deleted once published \u2014 the content then lives on the GitHub release and the ARS page, and keeping the source would duplicate it forever.",
+    "release": {
+        "notesFile": "build/release-notes-{version}.md"
     }
 }
