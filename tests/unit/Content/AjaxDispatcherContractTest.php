@@ -14,7 +14,7 @@
  * @copyright  (C) 2026 CWM Team All rights reserved
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.2.14
  */
 
 namespace CWM\ScriptureLinks\Tests\Content;
@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @since __DEPLOY_VERSION__
+ * @since 1.2.14
  */
 final class AjaxDispatcherContractTest extends TestCase
 {
@@ -36,7 +36,7 @@ final class AjaxDispatcherContractTest extends TestCase
      * honest about the map the running code actually uses.
      *
      * @return  array<string, string>  action => handler method
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.14
      */
     private static function dispatchers(): array
     {
@@ -68,7 +68,7 @@ final class AjaxDispatcherContractTest extends TestCase
 
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.14
      */
     #[TestDox('⚠️ Every advertised AJAX action resolves to a handler that exists')]
     public function testEveryDispatcherTargetExists(): void
@@ -93,7 +93,7 @@ final class AjaxDispatcherContractTest extends TestCase
      * A scan that finds nothing proves nothing.
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.14
      */
     #[TestDox('The dispatcher map was actually read, and covers the two actions from #46')]
     public function testScanIsNotVacuous(): void
@@ -111,7 +111,7 @@ final class AjaxDispatcherContractTest extends TestCase
      * handler that only catches \Exception lets it escape as a bodyless 500.
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.14
      */
     #[TestDox('AJAX handlers catch Throwable, so a fatal becomes a JSON error')]
     public function testAjaxHandlersCatchThrowable(): void
