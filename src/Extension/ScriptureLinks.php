@@ -274,7 +274,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'success'     => true,
                 'local_count' => $localCount,
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success'     => true,
                 'local_count' => 0,
@@ -416,7 +416,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'translations' => $translations,
                 'total_size'   => $totalSize,
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -473,7 +473,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     'message'     => Text::sprintf('JBS_ADM_BIBLE_DOWNLOAD_SUCCESS', strtoupper($abbreviation), $count),
                 ], JSON_THROW_ON_ERROR);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -519,7 +519,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'success' => true,
                 'message' => Text::sprintf('JBS_ADM_BIBLE_REMOVED', strtoupper($abbreviation)),
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -556,7 +556,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'success' => true,
                 'message' => Text::sprintf('JBS_ADM_BIBLE_REMOVED_ALL', $count),
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -619,7 +619,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'total'   => $total,
                 'message' => Text::sprintf('JBS_ADM_BIBLE_UPDATE_ALL_COMPLETE', $updated, $failed),
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -786,7 +786,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'count'   => $count,
                 'message' => Text::sprintf('JBS_ADM_SYNC_COMPLETE', $count),
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => Text::sprintf(
@@ -835,7 +835,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 'count'   => $count,
                 'message' => Text::sprintf('JBS_ADM_PROVIDER_CLEANUP_DONE', $count),
             ], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -888,7 +888,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             ScriptureParamsHelper::save($params);
 
             echo json_encode(['success' => true], JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage(),
