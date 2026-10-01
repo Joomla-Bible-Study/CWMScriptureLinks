@@ -24,6 +24,19 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.16                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.16</version>
+        <date>2026-10-01</date>
+        <note>
+            <item>fix: pin lib_cwmscripture 1.1.23 -- deprecated getQuery(true)/Factory::getLanguage() replacements, and ApiKeyField rebased on core's PasswordField</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.15                                                   -->
     <!-- ============================================================ -->
     <changelog>
