@@ -104,7 +104,7 @@ return new class () implements InstallerScriptInterface {
         try {
             $db = Factory::getContainer()->get(DatabaseInterface::class);
 
-            $query = $db->getQuery(true)
+            $query = $db->createQuery()
                 ->update($db->quoteName('#__extensions'))
                 ->set($db->quoteName('enabled') . ' = 1')
                 ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
@@ -144,7 +144,7 @@ return new class () implements InstallerScriptInterface {
             return;
         }
 
-        $query = $db->getQuery(true)
+        $query = $db->createQuery()
             ->select('COUNT(*)')
             ->from($db->quoteName('#__scheduler_tasks'))
             ->where($db->quoteName('type') . ' = ' . $db->quote('cwmscripture.downloadCoreTranslations'));
@@ -200,7 +200,7 @@ return new class () implements InstallerScriptInterface {
             $db->quote($params),
         ];
 
-        $insert = $db->getQuery(true)
+        $insert = $db->createQuery()
             ->insert($db->quoteName('#__scheduler_tasks'))
             ->columns($db->quoteName($columns))
             ->values(implode(',', $values));

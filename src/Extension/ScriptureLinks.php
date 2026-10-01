@@ -147,7 +147,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         }
 
         $db    = Factory::getContainer()->get(DatabaseInterface::class);
-        $query = $db->getQuery(true)
+        $query = $db->createQuery()
             ->select($db->quoteName(['installed', 'verse_count', 'data_size']))
             ->from($db->quoteName('#__bsms_bible_translations'))
             ->where($db->quoteName('abbreviation') . ' = :abbr')
@@ -263,7 +263,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
 
         try {
             $db    = Factory::getContainer()->get(DatabaseInterface::class);
-            $query = $db->getQuery(true)
+            $query = $db->createQuery()
                 ->select('COUNT(*)')
                 ->from($db->quoteName('#__bsms_bible_translations'))
                 ->where($db->quoteName('installed') . ' = 1');
@@ -337,7 +337,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 $cols[] = 't.downloaded_at';
             }
 
-            $query = $db->getQuery(true)
+            $query = $db->createQuery()
                 ->select($db->quoteName($cols))
                 ->from($db->quoteName('#__bsms_bible_translations', 't'))
                 ->order($db->quoteName('t.name') . ' ASC');
@@ -348,7 +348,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             $usageCounts = [];
 
             try {
-                $query = $db->getQuery(true)
+                $query = $db->createQuery()
                     ->select($db->quoteName('bible_version') . ' AS ' . $db->quoteName('abbr'))
                     ->select('COUNT(*) AS ' . $db->quoteName('cnt'))
                     ->from($db->quoteName('#__bsms_studies'))
@@ -361,7 +361,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     $usageCounts[$row->abbr] = (int) $row->cnt;
                 }
 
-                $query = $db->getQuery(true)
+                $query = $db->createQuery()
                     ->select($db->quoteName('bible_version2') . ' AS ' . $db->quoteName('abbr'))
                     ->select('COUNT(*) AS ' . $db->quoteName('cnt'))
                     ->from($db->quoteName('#__bsms_studies'))
@@ -381,7 +381,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             // but already has verses in the DB, update the flag
             foreach ($translations as $t) {
                 if ((int) ($t->bundled ?? 0) === 1 && (int) ($t->installed ?? 0) === 0) {
-                    $countQ = $db->getQuery(true)
+                    $countQ = $db->createQuery()
                         ->select('COUNT(*)')
                         ->from($db->quoteName('#__bsms_bible_verses'))
                         ->where($db->quoteName('translation') . ' = ' . $db->quote($t->abbreviation));
@@ -389,7 +389,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     $vcnt = (int) $db->loadResult();
 
                     if ($vcnt > 0) {
-                        $upQ = $db->getQuery(true)
+                        $upQ = $db->createQuery()
                             ->update($db->quoteName('#__bsms_bible_translations'))
                             ->set($db->quoteName('installed') . ' = 1')
                             ->set($db->quoteName('verse_count') . ' = ' . $vcnt)
@@ -590,7 +590,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             @set_time_limit(0);
 
             $db    = Factory::getContainer()->get(DatabaseInterface::class);
-            $query = $db->getQuery(true)
+            $query = $db->createQuery()
                 ->select($db->quoteName('abbreviation'))
                 ->from($db->quoteName('#__bsms_bible_translations'))
                 ->where($db->quoteName('installed') . ' = 1')
@@ -739,7 +739,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
 
                 $abbr = substr($abbr, 0, 20);
 
-                $query = $db->getQuery(true)
+                $query = $db->createQuery()
                     ->select($db->quoteName(['id', 'source']))
                     ->from($db->quoteName('#__bsms_bible_translations'))
                     ->where($db->quoteName('abbreviation') . ' = :abbr')
@@ -752,7 +752,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 }
 
                 if ($existing) {
-                    $query = $db->getQuery(true)
+                    $query = $db->createQuery()
                         ->update($db->quoteName('#__bsms_bible_translations'))
                         ->set($db->quoteName('name') . ' = :name')
                         ->set($db->quoteName('language') . ' = :lang')
@@ -765,7 +765,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     $db->execute();
                 } else {
                     $source = 'api_bible';
-                    $query  = $db->getQuery(true)
+                    $query  = $db->createQuery()
                         ->insert($db->quoteName('#__bsms_bible_translations'))
                         ->columns($db->quoteName(['abbreviation', 'name', 'language', 'source', 'provider_id']))
                         ->values(':abbr2, :name2, :lang2, :source2, :pid2')

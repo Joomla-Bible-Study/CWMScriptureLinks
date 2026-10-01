@@ -189,7 +189,7 @@ class Cwmscripture extends CMSPlugin implements SubscriberInterface
             }
 
             $db    = $this->getDatabase();
-            $query = $db->getQuery(true)
+            $query = $db->createQuery()
                 ->delete($db->quoteName('#__scheduler_tasks'))
                 ->where($db->quoteName('id') . ' = :id')
                 ->bind(':id', $taskId, \Joomla\Database\ParameterType::INTEGER);
