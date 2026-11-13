@@ -31,10 +31,9 @@
         <type>package</type>
         <version>1.2.17</version>
         <date>2026-10-01</date>
-        <note>
-            <item>fix: replace deprecated $db-&gt;getQuery(true) with createQuery() in this plugin's own code (17 call sites)</item>
-            <item>fix: pin lib_cwmscripture 1.1.24 -- the same fix applied to the bundled library (39 call sites)</item>
-        </note>
+        <change>
+            <item>This package's own database queries, and those of the bundled CWM Scripture Library 1.1.24, use Joomla's current createQuery() instead of the deprecated getQuery(true). Nothing behaves differently. Sites that log deprecations stop getting a notice on most pages.</item>
+        </change>
     </changelog>
 
     <!-- ============================================================ -->
@@ -45,9 +44,12 @@
         <type>package</type>
         <version>1.2.16</version>
         <date>2026-10-01</date>
-        <note>
-            <item>fix: pin lib_cwmscripture 1.1.23 -- deprecated getQuery(true)/Factory::getLanguage() replacements, and ApiKeyField rebased on core's PasswordField</item>
-        </note>
+        <fix>
+            <item>Bundles CWM Scripture Library 1.1.23. The API key field in the scripture settings now uses Joomla's own password field, so its show and hide button is labelled in your site's language and is announced to screen readers.</item>
+        </fix>
+        <change>
+            <item>The library's translation fields use Joomla's current database and language calls instead of ones Joomla has deprecated.</item>
+        </change>
     </changelog>
 
     <!-- ============================================================ -->
@@ -59,8 +61,7 @@
         <version>1.2.15</version>
         <date>2026-10-01</date>
         <note>
-            <item>chore: pin lib_cwmscripture 1.1.22 (dev-dependency refresh; no runtime changes)</item>
-            <item>chore(deps-dev): cwm/build-tools and php-cs-fixer bumps</item>
+            <item>Bundles CWM Scripture Library 1.1.22, which updates developer tooling only. No changes for sites.</item>
         </note>
     </changelog>
 
@@ -72,9 +73,14 @@
         <type>package</type>
         <version>1.2.14</version>
         <date>2026-09-04</date>
+        <fix>
+            <item>A scripture passage that crosses a chapter boundary, such as Genesis 1:26-2:3, showed an error page instead of the verses when the translation was stored on your own site. It now returns the verses. This comes from the bundled CWM Scripture Library 1.1.21.</item>
+            <item>On the Scripture settings screen, Remove all translations and the automatic clean-up when a provider is switched off both did nothing and showed no message. Both now work.</item>
+            <item>When anything on the Scripture settings screen fails, it now says why instead of leaving the page waiting.</item>
+        </fix>
         <note>
-            <item>fix(ajax): return JSON when a handler fatals, and pin the dispatcher targets (#46) by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/47</item>
-            <item>chore: pin lib_cwmscripture 1.1.21 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/48</item>
+            <item>Remove all translations keeps the built-in KJV and WEB, so the site always has a working Bible. Switching a provider off only clears catalogue entries you never downloaded; translations stored on your site stay.</item>
+            <item>Scripture linking in articles is unchanged. No action is needed after updating.</item>
         </note>
     </changelog>
 
@@ -86,6 +92,12 @@
         <type>package</type>
         <version>1.2.13</version>
         <date>2026-08-23</date>
+        <fix>
+            <item>On Joomla 7, the scripture reference fields stopped working. Book names offered no suggestions, the chapter and verse hints did not appear, and the Bible version selector lost its search. They work again. This comes from the bundled CWM Scripture Library 1.1.20. Joomla 5 and 6 were not affected.</item>
+        </fix>
+        <note>
+            <item>If you are on Joomla 7 and saw empty or unresponsive scripture fields, refresh your browser cache after updating.</item>
+        </note>
     </changelog>
 
     <!-- ============================================================ -->
@@ -160,7 +172,7 @@
         <version>1.2.7</version>
         <date>2026-08-13</date>
         <note>
-            <item>fix: date the package installer&#x27;s @since tags to 1.2.0 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/35</item>
+            <item>fix: date the package installer's @since tags to 1.2.0 by @bcordis in https://github.com/Joomla-Bible-Study/CWMScriptureLinks/pull/35</item>
         </note>
     </changelog>
 
@@ -280,8 +292,8 @@
         <version>1.1.5</version>
         <date>2026-05-09</date>
         <fix>
-            <item>scripturelinks.xml version bumped from 1.1.0 → 1.1.5. The plugin manifest had been left untouched at 1.1.0 since 9 commits before v1.1.4; only the package wrapper was bumped during prior releases, so users saw a 1.1.0 plugin row inside a 1.1.4 package install.</item>
-            <item>plg_task_cwmscripture/cwmscripture.xml version bumped from 1.1.0 → 1.1.5 for the same reason.</item>
+            <item>scripturelinks.xml version bumped from 1.1.0 to 1.1.5. The plugin manifest had been left untouched at 1.1.0 since 9 commits before v1.1.4; only the package wrapper was bumped during prior releases, so users saw a 1.1.0 plugin row inside a 1.1.4 package install.</item>
+            <item>plg_task_cwmscripture/cwmscripture.xml version bumped from 1.1.0 to 1.1.5 for the same reason.</item>
             <item>Set full creationDate values where they were month-only.</item>
         </fix>
         <change>
@@ -298,7 +310,7 @@
         <version>1.1.4</version>
         <date>2026-05-05</date>
         <addition>
-            <item>Joomla update server wiring: &lt;changelogurl&gt; and &lt;updateservers&gt; in the package and library manifests so Joomla can poll for updates and show changelog details on the user side.</item>
+            <item>Joomla update server wiring: the changelogurl and updateservers elements in the package and library manifests so Joomla can poll for updates and show changelog details on the user side.</item>
             <item>Akeeba Release System (ARS) integration for both the package (category 5, update stream 4) and the library (category 6, update stream 5).</item>
             <item>Adopted the new cwm/build-tools shared release pipeline (composer release / bump / package / ars-publish / changelog / sync-languages / sync-configs).</item>
             <item>Per-extension cwm-build.config.json describing the package layout, ARS endpoint, and changelog URL.</item>
@@ -306,7 +318,7 @@
         </addition>
         <change>
             <item>Untangled component versions: each of the package, library, and bundled plugins now tracks its own version cadence. cwm-bump from this repo only touches the package wrapper manifest; the library bumps from its own repo, plugins bump only when their code changes.</item>
-            <item>Build script (build/build-package.php) now reads each component&#x27;s version independently and self-verifies inner zip contents before exiting.</item>
+            <item>Build script (build/build-package.php) now reads each component's version independently and self-verifies inner zip contents before exiting.</item>
             <item>Standardized manifest metadata (authorEmail info@christianwebministries.org, copyright (C) 2026 CWM Team All rights reserved, creationDate May 2026).</item>
         </change>
         <note>
