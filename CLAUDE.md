@@ -9,12 +9,14 @@ CWMScriptureLinks is the **canonical scripture library** for the CWM (Christian 
 **PHP Requirement:** 8.3+
 **Joomla:** 5.x / 6.x
 
-The project packages two Joomla extensions together:
+The project packages four Joomla extensions together:
 
 1. **`lib_cwmscripture`** — A Joomla library extension (included as a **git submodule** from [Joomla-Bible-Study/lib_cwmscripture](https://github.com/Joomla-Bible-Study/lib_cwmscripture)) that owns the Bible provider system, scripture parsing, and 3 shared database tables.
-2. **`plg_content_scripturelinks`** — A content plugin that replaces `{scripture}` and `{bible}` tags in article content with scripture passages/links.
+2. **`plg_content_scripturelinks`** (repo root) — A content plugin that replaces `{scripture}` and `{bible}` tags in article content with scripture passages, tooltips or popups, and answers the tooltip's AJAX requests.
+3. **`plg_task_cwmscripture`** — A task plugin that runs the library's deferred background jobs, such as downloading the core Bible translations scheduled during install.
+4. **`plg_system_cwmscripture`** — A system plugin that protects downloaded Bible translations from the uninstall SQL that library versions up to 1.1.4 declared, which Joomla ran on every update (see "Package scriptfile" below).
 
-Both are distributed as a single Joomla package (`pkg_cwmscripture`).
+All four are distributed as a single Joomla package (`pkg_cwmscripture`).
 
 **Submodule note:** After cloning, run `git submodule update --init --recursive` to fetch the library code.
 
@@ -34,16 +36,20 @@ Key components: Bible provider system (Local, GetBible, API.Bible), scripture pa
 
 Namespace: `CWM\Plugin\Content\ScriptureLinks`
 
-- **`src/Extension/ScriptureLinks.php`** — Main plugin class. Subscribes to `onContentPrepare`.
-  - **Tag mode** (default): Replaces `{scripture}John 3:16{/scripture}` and `{bible}John 3:16{/bible}` tags. Supports version override: `{scripture kjv}...{/scripture}`.
+- **`src/Extension/ScriptureLinks.php`** — Main plugin class. Subscribes to `onContentPrepare` and `onAjaxScripturelinks`.
+  - **Tag mode** (default): Replaces `{scripture}John 3:16{/scripture}` and `{bible}John 3:16{/bible}` tags. A tag can override the version and the display mode: `{scripture kjv}...{/scripture}` or `{scripture version="web" display="tooltip"}...{/scripture}`.
   - **Auto-detect mode**: Regex scan for untagged scripture references using the library's `ScriptureHelper::getAbbreviations()`.
-  - **Display modes**: inline link (BibleGateway), tooltip, inline passage text, popup window.
-  - Falls back to BibleGateway link if provider lookup fails.
+  - **Display modes**: tooltip, inline passage text, popup window.
+  - If no provider returns text, the reference renders as plain text (`<span class="scripture-ref scripture-unavailable">`). Nothing links to an external Bible site.
+  - **AJAX** goes through `com_ajax` (`plugin=scripturelinks&group=content`) and is dispatched on `action`, never `task`.
+    - `getPassage` answers the scripture tooltip. Site visitors call it, so it is public and read-only, and takes no token. The reference must parse. The version must be the plugin's default or one in the translation catalog.
+    - The other actions serve Proclaim's Admin Center Scripture tab (GET token) and the plugin's own Translations Manager tab (POST token).
+    - `tests/unit/Content/AjaxDispatcherContractTest.php` checks that every action resolves to a handler and that every URL the plugin registers names an action it handles.
 - **`services/provider.php`** — Joomla DI service provider registration.
 
-### Package Manifest (`pkg_cwmscripture.xml`)
+### Package Manifest (`build/pkg_cwmscripture.xml`)
 
-Wraps both extensions. Library installs first (order in `<files>` matters).
+Wraps all four extensions. The library installs first (order in `<files>` matters).
 
 ### Provenance
 
@@ -70,13 +76,16 @@ All use `CREATE TABLE IF NOT EXISTS` for safe coexistence with existing Proclaim
 ## Key Relationships
 
 - **Proclaim** depends on this library via git submodule. Proclaim's `proclaim.script.php` installs and locks both extensions.
+- **CWM LivingWord** bundles `pkg_cwmscripture` and installs it on sites that may not have Proclaim. Those sites are why `plg_system_cwmscripture` exists, and why the plugin answers its own tooltips instead of relying on Proclaim's endpoint.
 - **Study-specific logic** (getScripturesForStudy, saveScriptures, syncLegacyColumns) stays in Proclaim — only generic parsing/formatting is in this library.
 - The logger category is `cwmscripture.bible` (log file: `cwmscripture.bible.php`).
 - WebAsset names use prefix `lib_cwmscripture.*`.
 
 ## Build
 
-Run `php build/build.php` to create the distributable `pkg_cwmscripture-{version}.zip`. The build script pulls the library from the submodule directory. Tests live in the `lib_cwmscripture` repo.
+Run `composer build` to create the distributable `pkg_cwmscripture-{version}.zip`. It runs `cwm-package` from [cwm-build-tools](https://github.com/Joomla-Bible-Study/cwm-build-tools), configured in `cwm-build.config.json`. The library is built from the `libraries/lib_cwmscripture` submodule, and the three plugins from this repo.
+
+The library's tests live in the `lib_cwmscripture` repo. This repo's PHPUnit suite (`tests/unit/`) covers the three plugins: run `composer test`, or `composer check` for the syntax check, php-cs-fixer and the tests together.
 
 ### Package scriptfile
 
