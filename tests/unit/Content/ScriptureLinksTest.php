@@ -80,7 +80,7 @@ final class ScriptureLinksTest extends TestCase
      * was always the plugin's default, so {scripture web display="tooltip"}
      * rendered from WEB and then showed the default version's text.
      *
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     public function testTooltipLinkCarriesTheVersionItWasRenderedFrom(): void
     {

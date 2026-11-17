@@ -19,7 +19,7 @@
  * @copyright  (C) 2026 CWM Team All rights reserved
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.2.20
  */
 
 namespace CWM\ScriptureLinks\Tests\Content;
@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @since __DEPLOY_VERSION__
+ * @since 1.2.20
  */
 final class AjaxAccessTest extends TestCase
 {
@@ -40,13 +40,13 @@ final class AjaxAccessTest extends TestCase
      * The rights of a user who can open and edit the plugin's settings.
      *
      * @var    list<string>
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.20
      */
     private const PLUGIN_EDITOR = ['core.manage com_plugins', 'core.edit com_plugins'];
 
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     protected function tearDown(): void
     {
@@ -60,7 +60,7 @@ final class AjaxAccessTest extends TestCase
      * touching this test.
      *
      * @return  array<string, array{0: string}>
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     public static function managementActions(): array
     {
@@ -85,7 +85,7 @@ final class AjaxAccessTest extends TestCase
      * @param   bool          $guest   Whether the user is a guest
      *
      * @return  object
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     private static function user(array $grants = [], bool $guest = false): object
     {
@@ -118,7 +118,7 @@ final class AjaxAccessTest extends TestCase
      * @param   ?object  $user    The user, or null for no identity
      *
      * @return  array{kind: string, message: string, code: int}
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     private static function dispatch(string $action, string $client, ?object $user): array
     {
@@ -201,7 +201,7 @@ final class AjaxAccessTest extends TestCase
      * @param   array   $reply   What dispatch() reported
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     private static function assertRefused(string $action, array $reply): void
     {
@@ -220,7 +220,7 @@ final class AjaxAccessTest extends TestCase
      * @param   string  $action  The action requested
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('managementActions')]
     #[TestDox('⚠️ A site visitor holding the page\'s token is refused: $action')]
@@ -237,7 +237,7 @@ final class AjaxAccessTest extends TestCase
      * @param   string  $action  The action requested
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('managementActions')]
     #[TestDox('A logged-in site user is refused, even one who may edit plugins: $action')]
@@ -252,7 +252,7 @@ final class AjaxAccessTest extends TestCase
      * @param   string  $action  The action requested
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('managementActions')]
     #[TestDox('An administrator with no rights over plugins is refused: $action')]
@@ -267,7 +267,7 @@ final class AjaxAccessTest extends TestCase
      * Each right alone, without the other.
      *
      * @return  array<string, array{0: list<string>}>
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     public static function partialRights(): array
     {
@@ -284,7 +284,7 @@ final class AjaxAccessTest extends TestCase
      * @param   list<string>  $grants  The rights the administrator holds
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('partialRights')]
     #[TestDox('⚠️ An administrator who cannot both open and edit plugins is refused ($_dataName)')]
@@ -299,7 +299,7 @@ final class AjaxAccessTest extends TestCase
      * @param   string  $action  The action requested
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('managementActions')]
     #[TestDox('An administrator who may edit plugins gets through, and the token is still checked: $action')]
@@ -318,7 +318,7 @@ final class AjaxAccessTest extends TestCase
 
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[TestDox('⚠️ The scripture tooltip stays public: a site visitor reaches getPassage')]
     public function testTooltipStaysPublic(): void
@@ -333,7 +333,7 @@ final class AjaxAccessTest extends TestCase
      * A scan that finds nothing proves nothing.
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[TestDox('The action list was read from the source, and covers both kinds of action')]
     public function testActionListIsNotVacuous(): void

@@ -114,7 +114,7 @@ final class AjaxDispatcherContractTest extends TestCase
      * actions the map has, so they could not see a URL naming one it doesn't.
      *
      * @return  void
-     * @since   __DEPLOY_VERSION__
+     * @since   1.2.20
      */
     #[TestDox('⚠️ Every com_ajax URL the plugin registers names an action the dispatcher handles')]
     public function testRegisteredUrlsNameHandledActions(): void

@@ -52,7 +52,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      * tooltip it served answered "Unknown action" (#62).
      *
      * @var    string
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.20
      */
     private const PASSAGE_AJAX_URL = 'index.php?option=com_ajax&plugin=scripturelinks&group=content&format=raw&action=getPassage';
 
@@ -182,7 +182,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *
      * @return  bool
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.20
      */
     private function mayManageTranslations($app): bool
     {
@@ -338,7 +338,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *
      * @return  void
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.20
      */
     private function ajaxGetPassage($app): void
     {
@@ -405,7 +405,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *
      * @return  bool
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.20
      */
     private function servesVersion(string $version): bool
     {
@@ -1270,7 +1270,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *
      * @return  ?BiblePassageResult  The provider's answer when it has text, otherwise null
      *
-     * @since  __DEPLOY_VERSION__
+     * @since  1.2.20
      */
     private function fetchPassage(ScriptureReference $ref, string $version): ?BiblePassageResult
     {

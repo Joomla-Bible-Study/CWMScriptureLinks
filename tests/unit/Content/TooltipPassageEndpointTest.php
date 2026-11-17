@@ -22,7 +22,7 @@
  * @copyright  (C) 2026 CWM Team All rights reserved
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.2.20
  */
 
 namespace CWM\ScriptureLinks\Tests\Content;
@@ -34,13 +34,13 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @since __DEPLOY_VERSION__
+ * @since 1.2.20
  */
 final class TooltipPassageEndpointTest extends TestCase
 {
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     protected function setUp(): void
     {
@@ -56,7 +56,7 @@ final class TooltipPassageEndpointTest extends TestCase
      * @param   array<string, string>  $query  The request's query values
      *
      * @return  array<string, mixed>  The decoded reply
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     private static function request(array $query): array
     {
@@ -111,7 +111,7 @@ final class TooltipPassageEndpointTest extends TestCase
 
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[TestDox('⚠️ A request with no token is answered, and reaches a provider')]
     public function testRequestWithoutATokenReachesAProvider(): void
@@ -127,7 +127,7 @@ final class TooltipPassageEndpointTest extends TestCase
 
     /**
      * @return  array<string, array{0: string}>
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     public static function unparseableReferences(): array
     {
@@ -145,7 +145,7 @@ final class TooltipPassageEndpointTest extends TestCase
      * @param   string  $reference  The reference sent
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('unparseableReferences')]
     #[TestDox('A reference that does not parse never reaches a provider ($_dataName)')]
@@ -160,7 +160,7 @@ final class TooltipPassageEndpointTest extends TestCase
 
     /**
      * @return  array<string, array{0: string}>
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     public static function badVersions(): array
     {
@@ -180,7 +180,7 @@ final class TooltipPassageEndpointTest extends TestCase
      * @param   string  $version  The version sent
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('badVersions')]
     #[TestDox('A version that is not an abbreviation never reaches a provider ($_dataName)')]
@@ -195,7 +195,7 @@ final class TooltipPassageEndpointTest extends TestCase
 
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[TestDox('⚠️ A version the site does not offer never reaches a provider')]
     public function testVersionTheSiteDoesNotOfferNeverReachesAProvider(): void
@@ -218,7 +218,7 @@ final class TooltipPassageEndpointTest extends TestCase
      * a letter outside ASCII.
      *
      * @return  array<string, array{0: string}>
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     public static function realVersions(): array
     {
@@ -238,7 +238,7 @@ final class TooltipPassageEndpointTest extends TestCase
      * @param   string  $version  The version sent
      *
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[DataProvider('realVersions')]
     #[TestDox('A real translation abbreviation looks like one, and goes on to the catalog ($_dataName)')]
@@ -251,7 +251,7 @@ final class TooltipPassageEndpointTest extends TestCase
 
     /**
      * @return  void
-     * @since __DEPLOY_VERSION__
+     * @since 1.2.20
      */
     #[TestDox('A request with no version is asked in the default version')]
     public function testMissingVersionFallsBackToTheDefault(): void
