@@ -25,6 +25,19 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.18                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.18</version>
+        <date>2026-11-17</date>
+        <change>
+            <item>Maintenance release that bundles CWM Scripture Library 1.1.25, itself a maintenance release. Nothing changes in how scripture links behave. The build tools are updated, including symfony/filesystem 8.1.11 for its path-handling advisory, and the 1.2.13 to 1.2.17 changelog entries are rewritten so Joomla shows each item whole.</item>
+        </change>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.17                                                   -->
     <!-- ============================================================ -->
     <changelog>
