@@ -43,8 +43,11 @@ Namespace: `CWM\Plugin\Content\ScriptureLinks`
   - If no provider returns text, the reference renders as plain text (`<span class="scripture-ref scripture-unavailable">`). Nothing links to an external Bible site.
   - **AJAX** goes through `com_ajax` (`plugin=scripturelinks&group=content`) and is dispatched on `action`, never `task`.
     - `getPassage` answers the scripture tooltip. Site visitors call it, so it is public and read-only, and takes no token. The reference must parse. The version must be the plugin's default or one in the translation catalog.
-    - The other actions serve Proclaim's Admin Center Scripture tab (GET token) and the plugin's own Translations Manager tab (POST token).
+    - The other actions manage the site's Bible translations, for the translations manager in Proclaim's Admin Center and in this plugin's settings.
+      - Before any of them runs, the dispatcher requires the administrator application and a user who can open and edit the plugin's settings: `core.manage` and `core.edit` on `com_plugins`. `core.edit` alone would admit Joomla's default Manager group, which inherits it site-wide. See `mayManageTranslations()`.
+      - They also take a CSRF token, but a token is no permission check: Joomla gives one to every visitor. New actions are refused by default unless they're `getPassage`.
     - `tests/unit/Content/AjaxDispatcherContractTest.php` checks that every action resolves to a handler and that every URL the plugin registers names an action it handles.
+    - `tests/unit/Content/AjaxAccessTest.php` sends every action, read from the source, through the real dispatcher. It checks that site visitors (even with the page's token), site users and administrators without the right are refused, that permitted administrators get through to the token check, and that `getPassage` stays public.
 - **`services/provider.php`** — Joomla DI service provider registration.
 
 ### Package Manifest (`build/pkg_cwmscripture.xml`)

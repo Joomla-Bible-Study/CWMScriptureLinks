@@ -25,6 +25,27 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.20                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.20</version>
+        <date>2026-11-17</date>
+        <security>
+            <item>The translation tools in the plugin's settings and in Proclaim's Admin Center could be used by any site visitor, without logging in, to delete downloaded translations or start downloads. They now work only in the administrator, for users who can manage and edit plugins (GHSA-g2v4-h5q3-xcwh).</item>
+        </security>
+        <fix>
+            <item>Scripture tooltips work on sites without CWM Proclaim. Every reference showed "Passage unavailable" there.</item>
+            <item>A tooltip shows the translation its tag names. It showed the default translation.</item>
+        </fix>
+        <change>
+            <item>On sites with Proclaim, tooltips in articles are answered by this plugin, not by Proclaim.</item>
+            <item>A tooltip shows only translations the site offers: its default, or one in its list of translations.</item>
+        </change>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.19                                                   -->
     <!-- ============================================================ -->
     <changelog>
