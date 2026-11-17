@@ -78,6 +78,10 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      * &group=content&format=raw&action={action}`. The action is read from
      * `action`; a URL that names it any other way gets "Unknown action".
      *
+     * Only getPassage, the scripture tooltip's read-only endpoint, is public.
+     * Every other action manages the site's Bible translations and needs
+     * mayManageTranslations().
+     *
      * @param   \Joomla\Event\Event  $event  The event object
      *
      * @return  void
@@ -86,12 +90,28 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      */
     public function onAjaxScripturelinks(\Joomla\Event\Event $event): void
     {
-        $app    = Factory::getApplication();
+        $app    = $this->getApplication() ?? Factory::getApplication();
         $action = $app->getInput()->getCmd('action', '');
 
         // Actions used by the plugin's own Translations Manager tab.
         // These use com_ajax's event result pattern (POST + addResult).
         $pluginActions = ['download', 'refresh', 'remove'];
+
+        // A CSRF token is not a permission check: Joomla gives one to every
+        // visitor, on every page that loads its core script. So the user is
+        // checked here, before any action runs, and the actions keep their
+        // token checks as well.
+        if ($action !== 'getPassage' && !$this->mayManageTranslations($app)) {
+            if (\in_array($action, $pluginActions, true)) {
+                throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_ACCESS_FORBIDDEN'), 403);
+            }
+
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => Text::_('JLIB_APPLICATION_ERROR_ACCESS_FORBIDDEN')], JSON_THROW_ON_ERROR);
+            $app->close();
+
+            return;
+        }
 
         if (\in_array($action, $pluginActions, true)) {
             Session::checkToken('post') || throw new \RuntimeException('Invalid token', 403);
@@ -118,7 +138,8 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         // Actions that answer with raw JSON (echo + $app->close()).
         // getPassage serves the site's scripture tooltips. It is public and
         // read-only, so it takes no token; see ajaxGetPassage(). The rest serve
-        // Proclaim's Admin Center Scripture tab and take a GET token.
+        // the translations manager, in Proclaim's Admin Center and in this
+        // plugin's settings, and take a GET token.
         header('Content-Type: application/json; charset=utf-8');
 
         $dispatchers = [
@@ -142,6 +163,39 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         }
 
         $this->{$dispatchers[$action]}($app);
+    }
+
+    /**
+     * Whether the current user may manage the site's Bible translations.
+     *
+     * Only in the administrator, and only for users who can open and edit this
+     * plugin's settings, since the translations are part of its configuration:
+     * `core.manage` and `core.edit` on com_plugins.
+     * - That admits the plugin editors who see the Translations Manager tab in
+     *   the plugin's settings.
+     * - It also admits Super Users, the only users Proclaim's Admin Center
+     *   lets in.
+     * - `core.edit` alone is not enough. Joomla's default Manager group
+     *   inherits it site-wide, but can't open the plugin manager.
+     *
+     * @param   \Joomla\CMS\Application\CMSApplicationInterface  $app  Application
+     *
+     * @return  bool
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    private function mayManageTranslations($app): bool
+    {
+        if (!$app->isClient('administrator')) {
+            return false;
+        }
+
+        $user = $app->getIdentity();
+
+        return $user !== null
+            && !$user->guest
+            && $user->authorise('core.manage', 'com_plugins')
+            && $user->authorise('core.edit', 'com_plugins');
     }
 
     /**

@@ -87,6 +87,7 @@ if (!class_exists(\Joomla\CMS\Plugin\CMSPlugin::class)) {
                 $this->params = new \Joomla\Registry\Registry($config["params"] ?? []);
             }
             public function setApplication($app): void { $this->application = $app; }
+            protected function getApplication() { return $this->application; }
         }
     ');
 }
@@ -96,6 +97,33 @@ if (!interface_exists(\Joomla\Event\SubscriberInterface::class)) {
         namespace Joomla\Event;
         interface SubscriberInterface {
             public static function getSubscribedEvents(): array;
+        }
+    ');
+}
+
+// The event com_ajax dispatches. At runtime it is an AjaxEvent, which can
+// collect results; the stub keeps what the plugin adds.
+if (!class_exists(\Joomla\Event\Event::class)) {
+    eval('
+        namespace Joomla\Event;
+        class Event {
+            public array $results = [];
+            public function __construct(private string $name = "", private array $arguments = []) {}
+            public function getName(): string { return $this->name; }
+            public function getArguments(): array { return $this->arguments; }
+            public function addResult($result): void { $this->results[] = $result; }
+        }
+    ');
+}
+
+// Session::checkToken() answers what a test sets in $tokenValid: true models a
+// request carrying the token the page handed out, which every visitor has.
+if (!class_exists(\Joomla\CMS\Session\Session::class)) {
+    eval('
+        namespace Joomla\CMS\Session;
+        class Session {
+            public static bool $tokenValid = false;
+            public static function checkToken($method = "post"): bool { return self::$tokenValid; }
         }
     ');
 }
