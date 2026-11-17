@@ -1152,7 +1152,7 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         $result = $this->fetchPassage($ref, $version);
 
         if ($result !== null) {
-            return $this->renderPassage($referenceText, $result->text, $result->copyright, $display);
+            return $this->renderPassage($referenceText, $result->text, $result->copyright, $display, $version);
         }
 
         // Fallback: return the reference as styled plain text
@@ -1225,12 +1225,13 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      * @param   string  $text       Passage text (may contain HTML)
      * @param   string  $copyright  Copyright notice
      * @param   string  $display    Display mode: 'tooltip', 'inline', 'popup'
+     * @param   string  $version    Bible version the text was fetched in
      *
      * @return  string  HTML output
      *
      * @since  1.0.0
      */
-    private function renderPassage(string $reference, string $text, string $copyright, string $display): string
+    private function renderPassage(string $reference, string $text, string $copyright, string $display, string $version): string
     {
         $copyrightHtml = '';
 
@@ -1272,9 +1273,12 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     // Error, not an Exception, and the link must still render.
                 }
 
+                // The tooltip asks for data-bible-version, so it must be the
+                // version this link was rendered from: the tag's own, if it
+                // names one, not always the default.
                 return '<a href="javascript:void(0)" class="proclaim-scripture-ref" tabindex="0" role="button"'
                     . ' data-scripture-ref="' . htmlspecialchars($reference) . '"'
-                    . ' data-bible-version="' . htmlspecialchars($this->params->get('default_version', 'kjv')) . '">'
+                    . ' data-bible-version="' . htmlspecialchars($version) . '">'
                     . htmlspecialchars($reference)
                     . '</a>';
 
