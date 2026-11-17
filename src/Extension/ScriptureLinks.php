@@ -12,9 +12,11 @@
 namespace CWM\Plugin\Content\ScriptureLinks\Extension;
 
 use CWM\Library\Scripture\Bible\AbstractBibleProvider;
+use CWM\Library\Scripture\Bible\BiblePassageResult;
 use CWM\Library\Scripture\Bible\BibleProviderFactory;
 use CWM\Library\Scripture\Helper\ScriptureHelper;
 use CWM\Library\Scripture\Helper\ScriptureParamsHelper;
+use CWM\Library\Scripture\Helper\ScriptureReference;
 use CWM\Library\Scripture\Importer\BibleImporter;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -42,6 +44,19 @@ use Joomla\Registry\Registry;
 class ScriptureLinks extends CMSPlugin implements SubscriberInterface
 {
     /**
+     * Where the scripture tooltip fetches passage text: ajaxGetPassage().
+     *
+     * lib_cwmscripture's scripture-tooltip.es6.js appends `reference` and
+     * `version` to it. The action is named by `action`, the parameter the
+     * dispatcher reads; this URL used to say `task=getPassage`, and every
+     * tooltip it served answered "Unknown action" (#62).
+     *
+     * @var    string
+     * @since  __DEPLOY_VERSION__
+     */
+    private const PASSAGE_AJAX_URL = 'index.php?option=com_ajax&plugin=scripturelinks&group=content&format=raw&action=getPassage';
+
+    /**
      * Returns an array of events this subscriber will listen to.
      *
      * @return  array
@@ -57,10 +72,11 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
     }
 
     /**
-     * AJAX dispatcher for scripture management actions.
+     * AJAX dispatcher for the scripture tooltip and scripture management.
      *
      * Routed via `com_ajax`: `index.php?option=com_ajax&plugin=scripturelinks
-     * &group=content&format=json&action={action}`
+     * &group=content&format=raw&action={action}`. The action is read from
+     * `action`; a URL that names it any other way gets "Unknown action".
      *
      * @param   \Joomla\Event\Event  $event  The event object
      *
@@ -99,11 +115,14 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             return;
         }
 
-        // Actions used by Proclaim's Admin Center Scripture tab.
-        // These use raw JSON output (GET token, echo + $app->close()).
+        // Actions that answer with raw JSON (echo + $app->close()).
+        // getPassage serves the site's scripture tooltips. It is public and
+        // read-only, so it takes no token; see ajaxGetPassage(). The rest serve
+        // Proclaim's Admin Center Scripture tab and take a GET token.
         header('Content-Type: application/json; charset=utf-8');
 
         $dispatchers = [
+            'getPassage'            => 'ajaxGetPassage',
             'getStatus'             => 'ajaxGetStatus',
             'getTranslations'       => 'ajaxGetTranslations',
             'downloadTranslation'   => 'ajaxDownloadTranslation',
@@ -240,6 +259,121 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
     // ──────────────────────────────────────────────────────────────
     // AJAX action handlers (called from onAjaxScripturelinks)
     // ──────────────────────────────────────────────────────────────
+
+    /**
+     * Passage text for the scripture tooltip.
+     *
+     * renderPassage() registers PASSAGE_AJAX_URL for lib_cwmscripture's
+     * scripture-tooltip.es6.js, which adds `reference` and `version` and reads
+     * `success`, `text` and `copyright` from the reply.
+     *
+     * Site visitors call this, so it is the one action with no token and no
+     * permission check, and it must stay read-only:
+     * - It changes nothing, so there is nothing to forge. A token would only
+     *   break tooltips on pages served from the page cache, or left open past
+     *   the session lifetime, because those carry a token that no longer
+     *   matches.
+     * - Request values never reach a provider as sent. The reference must
+     *   parse, and fetchPassage() rebuilds it from the parse, so a request can
+     *   only ask for what an article tag could.
+     * - The version must look like a translation abbreviation, and must be one
+     *   the site offers (servesVersion()). Otherwise anyone could make the site
+     *   fetch, and cache, translations it never shows.
+     *
+     * @param   \Joomla\CMS\Application\CMSApplicationInterface  $app  Application
+     *
+     * @return  void
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    private function ajaxGetPassage($app): void
+    {
+        // Nothing here needs the session. Release its lock before a provider is
+        // asked, so a page's tooltips don't queue behind each other.
+        session_write_close();
+
+        $reply = ['success' => false, 'message' => 'Passage unavailable'];
+
+        try {
+            $input     = $app->getInput();
+            $reference = trim($input->getString('reference', ''));
+            $version   = trim($input->getString('version', ''));
+
+            if ($version === '') {
+                $version = (string) $this->params->get('default_version', 'kjv');
+            }
+
+            $ref = mb_strlen($reference) <= 100 ? ScriptureHelper::parseReference($reference) : null;
+
+            if ($ref === null) {
+                $reply['message'] = 'Not a scripture reference';
+            } elseif (!preg_match('/^[\p{L}\p{N}][\p{L}\p{N} ._-]{0,31}$/u', $version)) {
+                $reply['message'] = 'Not a Bible version';
+            } elseif (!$this->servesVersion($version)) {
+                $reply['message'] = 'Bible version not offered here';
+            } else {
+                $result = $this->fetchPassage($ref, $version);
+
+                if ($result !== null) {
+                    // The tooltip writes both into the popover as HTML. The text
+                    // is the provider's verse markup, as inline mode prints it;
+                    // the copyright is plain text, escaped as inline mode does.
+                    $reply = [
+                        'success'     => true,
+                        'text'        => $result->text,
+                        'copyright'   => htmlspecialchars($result->copyright),
+                        'translation' => $version,
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::add('ScriptureLinks: tooltip passage request failed: ' . $e->getMessage(), Log::ERROR, 'cwmscripture.bible');
+        }
+
+        // Always JSON. The tooltip's fetch treats anything else as a login wall.
+        echo json_encode($reply, JSON_INVALID_UTF8_SUBSTITUTE) ?: '{"success":false}';
+
+        $app->close();
+    }
+
+    /**
+     * Whether the site offers a Bible version: its default, or one in its
+     * translation catalog (#__bsms_bible_translations), which the version
+     * pickers list.
+     *
+     * The tooltip endpoint is public. For a version the catalog doesn't know,
+     * the provider factory falls back to GetBible, so without this check
+     * anyone could make the site fetch and cache translations it never shows.
+     * It fails closed: if the catalog can't be read, only the default is
+     * offered.
+     *
+     * @param   string  $version  Bible version abbreviation
+     *
+     * @return  bool
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    private function servesVersion(string $version): bool
+    {
+        if ($version === (string) $this->params->get('default_version', 'kjv')) {
+            return true;
+        }
+
+        try {
+            $db    = Factory::getContainer()->get(DatabaseInterface::class);
+            $query = $db->createQuery()
+                ->select('1')
+                ->from($db->quoteName('#__bsms_bible_translations'))
+                ->where($db->quoteName('abbreviation') . ' = :abbreviation')
+                ->bind(':abbreviation', $version);
+
+            return (bool) $db->setQuery($query, 0, 1)->loadResult();
+        } catch (\Throwable $e) {
+            Log::add('ScriptureLinks: could not read the translation catalog: ' . $e->getMessage(), Log::ERROR, 'cwmscripture.bible');
+
+            return false;
+        }
+    }
 
     /**
      * Get count of locally installed translations.
@@ -1058,7 +1192,36 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             return $referenceText;
         }
 
-        // Build a + separated reference for the provider
+        $result = $this->fetchPassage($ref, $version);
+
+        if ($result !== null) {
+            return $this->renderPassage($referenceText, $result->text, $result->copyright, $display, $version);
+        }
+
+        // Fallback: return the reference as styled plain text
+        return '<span class="scripture-ref scripture-unavailable">'
+            . htmlspecialchars($referenceText)
+            . '</span>';
+    }
+
+    /**
+     * Ask a provider for a parsed reference, the way an article tag does.
+     *
+     * Shared by buildScriptureLink() and ajaxGetPassage(). A tooltip is then
+     * answered by the same provider, with the same settings and from the same
+     * cache entry, as the page that rendered its link.
+     *
+     * @param   ScriptureReference  $ref      The parsed reference
+     * @param   string              $version  Bible version abbreviation
+     *
+     * @return  ?BiblePassageResult  The provider's answer when it has text, otherwise null
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    private function fetchPassage(ScriptureReference $ref, string $version): ?BiblePassageResult
+    {
+        // Build a + separated reference for the provider. It is rebuilt from the
+        // parse, so the text a request sent never reaches a provider, or the log.
         $formattedRef = ScriptureHelper::formatReference(
             $ref->booknumber,
             $ref->chapterBegin,
@@ -1089,16 +1252,13 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
             $result = $provider->getPassage($queryRef, $version);
 
             if ($result->hasText()) {
-                return $this->renderPassage($referenceText, $result->text, $result->copyright, $display);
+                return $result;
             }
         } catch (\Throwable $e) {
-            Log::add('ScriptureLinks: Error fetching "' . $referenceText . '": ' . $e->getMessage(), Log::ERROR, 'cwmscripture.bible');
+            Log::add('ScriptureLinks: Error fetching "' . $formattedRef . '" (' . $version . '): ' . $e->getMessage(), Log::ERROR, 'cwmscripture.bible');
         }
 
-        // Fallback: return the reference as styled plain text
-        return '<span class="scripture-ref scripture-unavailable">'
-            . htmlspecialchars($referenceText)
-            . '</span>';
+        return null;
     }
 
     /**
@@ -1108,12 +1268,13 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      * @param   string  $text       Passage text (may contain HTML)
      * @param   string  $copyright  Copyright notice
      * @param   string  $display    Display mode: 'tooltip', 'inline', 'popup'
+     * @param   string  $version    Bible version the text was fetched in
      *
      * @return  string  HTML output
      *
      * @since  1.0.0
      */
-    private function renderPassage(string $reference, string $text, string $copyright, string $display): string
+    private function renderPassage(string $reference, string $text, string $copyright, string $display, string $version): string
     {
         $copyrightHtml = '';
 
@@ -1135,30 +1296,32 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                     $wa->useScript('lib_cwmscripture.scripture-tooltip');
                     $wa->useStyle('lib_cwmscripture.scripture-tooltip');
 
-                    // Register the AJAX URL for the tooltip JS if not already set.
-                    // Uses com_ajax when standalone, com_proclaim when available.
+                    // Point the tooltip JS at ajaxGetPassage(), unless the page
+                    // already has an endpoint, as a Proclaim view registers its
+                    // own. This plugin answers its own links from the provider
+                    // and cache entry they were rendered from, so it doesn't
+                    // need Proclaim. Proclaim used to be preferred whenever its
+                    // controller class existed, which it still does while
+                    // Proclaim is disabled; the URL then led to a 404 (#62).
                     $existing = $doc->getScriptOptions('cwmscripture.options');
 
                     if (empty($existing['ajaxUrl'])) {
-                        $ajaxUrl = class_exists('CWM\\Component\\Proclaim\\Site\\Controller\\CwmscriptureController')
-                            ? Route::_(
-                                'index.php?option=com_proclaim&task=cwmscripture.getPassageXHR&format=raw',
-                                false
-                            )
-                            : Route::_(
-                                'index.php?option=com_ajax&plugin=scripturelinks&group=content&format=raw&task=getPassage',
-                                false
-                            );
-
-                        $doc->addScriptOptions('cwmscripture.options', ['ajaxUrl' => $ajaxUrl]);
+                        $doc->addScriptOptions('cwmscripture.options', [
+                            'ajaxUrl' => Route::_(self::PASSAGE_AJAX_URL, false),
+                        ]);
                     }
-                } catch (\Exception $e) {
-                    // Assets may not be available in non-HTML contexts
+                } catch (\Throwable) {
+                    // Assets need a document. Without one (the console
+                    // application has no getDocument()) the call fails with an
+                    // Error, not an Exception, and the link must still render.
                 }
 
+                // The tooltip asks for data-bible-version, so it must be the
+                // version this link was rendered from: the tag's own, if it
+                // names one, not always the default.
                 return '<a href="javascript:void(0)" class="proclaim-scripture-ref" tabindex="0" role="button"'
                     . ' data-scripture-ref="' . htmlspecialchars($reference) . '"'
-                    . ' data-bible-version="' . htmlspecialchars($this->params->get('default_version', 'kjv')) . '">'
+                    . ' data-bible-version="' . htmlspecialchars($version) . '">'
                     . htmlspecialchars($reference)
                     . '</a>';
 

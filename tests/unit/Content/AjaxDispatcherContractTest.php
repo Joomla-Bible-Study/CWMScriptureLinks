@@ -106,6 +106,44 @@ final class AjaxDispatcherContractTest extends TestCase
     }
 
     /**
+     * Every com_ajax URL the plugin registers must name an action it handles.
+     *
+     * The tooltip's URL said `task=getPassage`. The dispatcher reads `action`,
+     * and had no passage handler either, so every tooltip on a site without
+     * Proclaim answered "Unknown action" (#62). The tests above only look at
+     * actions the map has, so they could not see a URL naming one it doesn't.
+     *
+     * @return  void
+     * @since   __DEPLOY_VERSION__
+     */
+    #[TestDox('⚠️ Every com_ajax URL the plugin registers names an action the dispatcher handles')]
+    public function testRegisteredUrlsNameHandledActions(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 3) . '/src/Extension/ScriptureLinks.php');
+
+        preg_match_all("/'(index\.php\?option=com_ajax&plugin=scripturelinks[^']*)'/", $source, $urls);
+
+        self::assertNotEmpty($urls[1], 'The tooltip URL, at least, should have been found');
+
+        // The POST actions of the plugin's own Translations Manager tab are
+        // dispatched before the map, from their own list.
+        $handled = array_keys(self::dispatchers());
+
+        if (preg_match('/\$pluginActions = \[([^\]]*)\]/', $source, $list)) {
+            preg_match_all("/'([a-zA-Z]+)'/", $list[1], $names);
+            $handled = array_merge($handled, $names[1]);
+        }
+
+        foreach ($urls[1] as $url) {
+            parse_str((string) parse_url($url, \PHP_URL_QUERY), $query);
+
+            self::assertArrayNotHasKey('task', $query, $url . ': the dispatcher reads `action`, so `task` gets "Unknown action"');
+            self::assertArrayHasKey('action', $query, $url . ' names no action');
+            self::assertContains($query['action'], $handled, $url . ' names an action the dispatcher does not handle');
+        }
+    }
+
+    /**
      * The handlers answer with JSON, so they must catch \Throwable — an Error
      * from a missing or renamed library method is not an \Exception, and a
      * handler that only catches \Exception lets it escape as a bodyless 500.

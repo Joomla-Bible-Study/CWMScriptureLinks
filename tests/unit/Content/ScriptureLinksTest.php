@@ -75,6 +75,26 @@ final class ScriptureLinksTest extends TestCase
         $this->assertSame(['display' => 'inline'], $result);
     }
 
+    /**
+     * The tooltip asks its endpoint for the link's data-bible-version. That
+     * was always the plugin's default, so {scripture web display="tooltip"}
+     * rendered from WEB and then showed the default version's text.
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    public function testTooltipLinkCarriesTheVersionItWasRenderedFrom(): void
+    {
+        $plugin = (new \ReflectionClass(ScriptureLinks::class))
+            ->newInstance(null, ['params' => ['default_version' => 'kjv']]);
+
+        $html = $this->privateMethod('renderPassage')
+            ->invoke($plugin, 'John 3:16', '<p>For God so loved the world</p>', '', 'tooltip', 'web');
+
+        $this->assertStringContainsString('data-bible-version="web"', $html);
+        $this->assertStringNotContainsString('data-bible-version="kjv"', $html);
+        $this->assertStringContainsString('data-scripture-ref="John 3:16"', $html);
+    }
+
     private function privateMethod(string $name): \ReflectionMethod
     {
         return (new \ReflectionClass(ScriptureLinks::class))->getMethod($name);
