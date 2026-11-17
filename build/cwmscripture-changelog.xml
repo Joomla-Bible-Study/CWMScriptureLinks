@@ -25,6 +25,23 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.19                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.19</version>
+        <date>2026-11-17</date>
+        <fix>
+            <item>Bundles CWM Scripture Library 1.1.26. Whole chapters from GetBible.net translations come back complete; a chapter such as Psalm 23 showed only its first verse.</item>
+            <item>Passages that cross a chapter boundary, such as John 3:16-4:2, now work with GetBible.net translations. They showed only the reference before.</item>
+        </fix>
+        <change>
+            <item>The bundled library installs on Joomla 5.0 and later. It required Joomla 5.2.</item>
+        </change>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.18                                                   -->
     <!-- ============================================================ -->
     <changelog>
