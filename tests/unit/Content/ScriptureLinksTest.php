@@ -77,11 +77,7 @@ final class ScriptureLinksTest extends TestCase
 
     private function privateMethod(string $name): \ReflectionMethod
     {
-        $reflection = new \ReflectionClass(ScriptureLinks::class);
-        $method     = $reflection->getMethod($name);
-        $method->setAccessible(true);
-
-        return $method;
+        return (new \ReflectionClass(ScriptureLinks::class))->getMethod($name);
     }
 
     private function stubPlugin(): ScriptureLinks
