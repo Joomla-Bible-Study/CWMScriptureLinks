@@ -275,8 +275,10 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
      *   matches.
      * - Request values never reach a provider as sent. The reference must
      *   parse, and fetchPassage() rebuilds it from the parse, so a request can
-     *   only ask for what an article tag could. The version must look like a
-     *   translation abbreviation, and the providers encode it in their URLs.
+     *   only ask for what an article tag could.
+     * - The version must look like a translation abbreviation, and must be one
+     *   the site offers (servesVersion()). Otherwise anyone could make the site
+     *   fetch, and cache, translations it never shows.
      *
      * @param   \Joomla\CMS\Application\CMSApplicationInterface  $app  Application
      *
@@ -307,6 +309,8 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
                 $reply['message'] = 'Not a scripture reference';
             } elseif (!preg_match('/^[\p{L}\p{N}][\p{L}\p{N} ._-]{0,31}$/u', $version)) {
                 $reply['message'] = 'Not a Bible version';
+            } elseif (!$this->servesVersion($version)) {
+                $reply['message'] = 'Bible version not offered here';
             } else {
                 $result = $this->fetchPassage($ref, $version);
 
@@ -330,6 +334,45 @@ class ScriptureLinks extends CMSPlugin implements SubscriberInterface
         echo json_encode($reply, JSON_INVALID_UTF8_SUBSTITUTE) ?: '{"success":false}';
 
         $app->close();
+    }
+
+    /**
+     * Whether the site offers a Bible version: its default, or one in its
+     * translation catalog (#__bsms_bible_translations), which the version
+     * pickers list.
+     *
+     * The tooltip endpoint is public. For a version the catalog doesn't know,
+     * the provider factory falls back to GetBible, so without this check
+     * anyone could make the site fetch and cache translations it never shows.
+     * It fails closed: if the catalog can't be read, only the default is
+     * offered.
+     *
+     * @param   string  $version  Bible version abbreviation
+     *
+     * @return  bool
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    private function servesVersion(string $version): bool
+    {
+        if ($version === (string) $this->params->get('default_version', 'kjv')) {
+            return true;
+        }
+
+        try {
+            $db    = Factory::getContainer()->get(DatabaseInterface::class);
+            $query = $db->createQuery()
+                ->select('1')
+                ->from($db->quoteName('#__bsms_bible_translations'))
+                ->where($db->quoteName('abbreviation') . ' = :abbreviation')
+                ->bind(':abbreviation', $version);
+
+            return (bool) $db->setQuery($query, 0, 1)->loadResult();
+        } catch (\Throwable $e) {
+            Log::add('ScriptureLinks: could not read the translation catalog: ' . $e->getMessage(), Log::ERROR, 'cwmscripture.bible');
+
+            return false;
+        }
     }
 
     /**

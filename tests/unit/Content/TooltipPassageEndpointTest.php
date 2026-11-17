@@ -9,12 +9,14 @@
  * - It answers site visitors, who carry no token.
  * - It always answers with JSON.
  * - It never hands a provider a reference it can't parse, or a version that
- *   doesn't look like a translation abbreviation.
+ *   doesn't look like a translation abbreviation or that the site doesn't
+ *   offer.
  *
  * There is no database here, so a request that gets as far as a provider makes
  * the provider factory log a DB error. That log is how these tests tell "asked
- * a provider" from "rejected at the door". GDPR mode keeps the factory on the
- * local provider, so no test reaches the network.
+ * a provider" from "rejected at the door". For the same reason the translation
+ * catalog can't be read, so only the default version (kjv) is offered. GDPR
+ * mode keeps the factory on the local provider, so no test reaches the network.
  *
  * @package    CWM.ScriptureLinks.Tests
  * @copyright  (C) 2026 CWM Team All rights reserved
@@ -192,6 +194,25 @@ final class TooltipPassageEndpointTest extends TestCase
     }
 
     /**
+     * @return  void
+     * @since __DEPLOY_VERSION__
+     */
+    #[TestDox('⚠️ A version the site does not offer never reaches a provider')]
+    public function testVersionTheSiteDoesNotOfferNeverReachesAProvider(): void
+    {
+        // For a version the catalog doesn't know, the provider factory falls
+        // back to GetBible: without the check, anyone could make the site fetch
+        // and cache translations it never shows. The catalog can't be read
+        // here, and the check fails closed.
+        $reply = self::request(['reference' => 'John 3:16', 'version' => 'web']);
+
+        self::assertFalse($reply['success']);
+        self::assertSame('Bible version not offered here', $reply['message']);
+        self::assertCount(1, Log::$entries, 'Only the catalog lookup may have run');
+        self::assertStringContainsString('translation catalog', Log::$entries[0]['message']);
+    }
+
+    /**
      * Abbreviations as GetBible and API.Bible mint them. API.Bible's are only
      * lowercased and cut to 20 characters, so they can carry a space, a dot or
      * a letter outside ASCII.
@@ -202,7 +223,6 @@ final class TooltipPassageEndpointTest extends TestCase
     public static function realVersions(): array
     {
         return [
-            'kjv'         => ['kjv'],
             'long name'   => ['basicenglish'],
             'with digits' => ['luther1912'],
             'mixed case'  => ['engKJV'],
@@ -221,13 +241,12 @@ final class TooltipPassageEndpointTest extends TestCase
      * @since __DEPLOY_VERSION__
      */
     #[DataProvider('realVersions')]
-    #[TestDox('A real translation abbreviation is accepted ($_dataName)')]
-    public function testRealVersionIsAccepted(string $version): void
+    #[TestDox('A real translation abbreviation looks like one, and goes on to the catalog ($_dataName)')]
+    public function testRealVersionPassesThePatternToTheCatalog(string $version): void
     {
         $reply = self::request(['reference' => 'John 3:16', 'version' => $version]);
 
-        self::assertSame('Passage unavailable', $reply['message'], 'The version must have passed validation');
-        self::assertNotEmpty(Log::$entries);
+        self::assertSame('Bible version not offered here', $reply['message'], 'The pattern must have accepted it');
     }
 
     /**
