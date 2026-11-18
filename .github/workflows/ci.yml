@@ -29,8 +29,9 @@ jobs:
     # CI equivalent of the `^1.9.0` Composer constraint in composer.json.
     uses: Joomla-Bible-Study/cwm-build-tools/.github/workflows/joomla-package-ci.yml@v1
     with:
-      # This project tracks 8.4; the shared default is 8.3.
-      php-version: '8.4'
+      # Development and CI run on 8.5 (the shared default is 8.3); the
+      # shipped package still supports 8.4.
+      php-version: '8.5'
       node-version: '24'
       # The scripture library is a submodule, and the package embeds it.
       submodules: 'recursive'

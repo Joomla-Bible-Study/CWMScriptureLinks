@@ -74,5 +74,10 @@
         "verify": "cwm-verify",
         "joomla-install": "cwm-joomla-install",
         "joomla-latest": "cwm-joomla-latest"
+    },
+    "config": {
+        "platform": {
+            "php": "8.5.0"
+        }
     }
 }

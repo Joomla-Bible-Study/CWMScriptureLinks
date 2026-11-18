@@ -59,7 +59,7 @@ true and costs nothing, not because anything is owed.
 - `plg_system_cwmscripture` — shared setup and compatibility checks
 
 **Joomla versions:** 5.x, 6.x
-**PHP:** 8.3 or newer
+**PHP:** 8.4 or newer
 **Licence:** GNU GPL v2 or later
 **Implements the Joomla Update System:** yes — update stream 4 on christianwebministries.org
 **Price:** free

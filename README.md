@@ -13,7 +13,7 @@ The `pkg_cwmscripture` package installs four extensions:
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.4+
 - Joomla 5.x or 6.x
 
 ## Installation
