@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 CWMScriptureLinks is the **canonical scripture library** for the CWM (Christian Web Ministries) ecosystem. It provides Bible text lookup, caching, and rendering as a shared Joomla 5/6 library, plus a content plugin for automatic scripture linking in articles.
 
-**PHP Requirement:** 8.3+ for the shipped code. Proclaim bundles this package and installs on 8.3, so the two floors move together. Development and CI run on PHP 8.5, and a second CI job runs the tests on 8.3, so don't use anything newer than 8.3: no 8.4 property hooks, asymmetric visibility, `new Foo()->bar()` without parentheses or `array_find()` / `array_any()`, and no 8.5 pipe operator (`|>`), `clone()` with properties or `array_first()` / `array_last()`. PHPUnit stays on 12.5, the last line that runs on 8.3; 13 needs PHP 8.4.1.
+**PHP Requirement:** 8.3+ for the shipped code until Proclaim 11 is released, then 8.4, as the CWM extensions move together. Proclaim bundles this package and installs on 8.3, so the two floors move together. Development and CI run on PHP 8.5, and a second CI job runs the tests on 8.3, so don't use anything newer than 8.3: no 8.4 property hooks, asymmetric visibility, `new Foo()->bar()` without parentheses or `array_find()` / `array_any()`, and no 8.5 pipe operator (`|>`), `clone()` with properties or `array_first()` / `array_last()`. PHPUnit stays on 12.5, the last line that runs on 8.3; 13 needs PHP 8.4.1.
 **Joomla:** 5.x / 6.x
 
 The project packages four Joomla extensions together:
