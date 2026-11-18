@@ -29,8 +29,8 @@ jobs:
     # CI equivalent of the `^1.9.0` Composer constraint in composer.json.
     uses: Joomla-Bible-Study/cwm-build-tools/.github/workflows/joomla-package-ci.yml@v1
     with:
-      # Development and CI run on 8.5 (the shared default is 8.3); the
-      # shipped package still supports 8.4.
+      # Development and CI run on 8.5. The shipped package supports 8.3, which
+      # the php83 job below tests.
       php-version: '8.5'
       node-version: '24'
       # The scripture library is a submodule, and the package embeds it.
@@ -39,3 +39,16 @@ jobs:
       lib-path: 'libraries/lib_cwmscripture'
       build-command: 'composer build'
       package-glob: 'build/dist/pkg_cwmscripture-*.zip'
+  php83:
+    name: PHP 8.3
+    # The package supports PHP 8.3, and Proclaim, which bundles it, installs
+    # there, so the tests run on 8.3 too. The library workflow can skip
+    # packaging, which needs cwm-build-tools and so PHP 8.4; the job above
+    # builds the package. PHPUnit 12.5 is the last line that runs on 8.3.
+    uses: Joomla-Bible-Study/cwm-build-tools/.github/workflows/joomla-library-ci.yml@v1
+    with:
+      php-version: '8.3'
+      submodules: 'recursive'
+      npm-build: false
+      run-lint: false
+      build-command: ''
