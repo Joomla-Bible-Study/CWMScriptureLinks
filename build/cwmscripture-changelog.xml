@@ -25,6 +25,22 @@
 <changelogs>
 
     <!-- ============================================================ -->
+    <!-- 1.2.21                                                   -->
+    <!-- ============================================================ -->
+    <changelog>
+        <element>pkg_cwmscripture</element>
+        <type>package</type>
+        <version>1.2.21</version>
+        <date>2026-11-18</date>
+        <fix>
+            <item>On a PHP version older than 8.3, the plugins switch themselves off instead of breaking the site, and administrators see a notice explaining why.</item>
+        </fix>
+        <note>
+            <item>PHP 8.3 is supported until CWM Proclaim 11 is released. From then on, the CWM extensions require PHP 8.4 or later.</item>
+        </note>
+    </changelog>
+
+    <!-- ============================================================ -->
     <!-- 1.2.20                                                   -->
     <!-- ============================================================ -->
     <changelog>

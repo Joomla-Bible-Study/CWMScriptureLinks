@@ -52,7 +52,7 @@ return new class () implements ServiceProviderInterface {
      *
      * @return  void
      *
-     * @since   __DEPLOY_VERSION__
+     * @since   1.2.21
      */
     private function postPhpBanner(): void
     {
