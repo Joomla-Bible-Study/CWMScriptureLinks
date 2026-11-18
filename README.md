@@ -14,6 +14,7 @@ The `pkg_cwmscripture` package installs four extensions:
 ## Requirements
 
 - PHP 8.3+
+  - PHP 8.3 is supported until Proclaim 11 is released. From then on, the CWM extensions, this one included, require PHP 8.4 or later.
 - Joomla 5.x or 6.x
 
 ## Installation
