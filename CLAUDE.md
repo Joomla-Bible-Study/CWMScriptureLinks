@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 CWMScriptureLinks is the **canonical scripture library** for the CWM (Christian Web Ministries) ecosystem. It provides Bible text lookup, caching, and rendering as a shared Joomla 5/6 library, plus a content plugin for automatic scripture linking in articles.
 
-**PHP Requirement:** 8.3+
+**PHP Requirement:** 8.4+ for the shipped code. Development and CI run on PHP 8.5, so don't use 8.5-only syntax or functions such as the pipe operator (`|>`), `clone()` with properties, or `array_first()` / `array_last()`.
 **Joomla:** 5.x / 6.x
 
 The project packages four Joomla extensions together:

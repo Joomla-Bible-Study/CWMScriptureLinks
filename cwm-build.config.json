@@ -93,7 +93,7 @@
         "endpoint": "https://www.christianwebministries.org",
         "categoryId": 5,
         "updateStreamId": 4,
-        "environments": ["45", "46", "48", "49", "50"],
+        "environments": ["45", "46", "49", "50"],
         "tokenItem": "CWM ARS API Token",
         "tokenVault": "CWM",
         "itemDescription": "CWM Scripture Links package — bundles the shared scripture library, the content plugin that processes {scripture}/{bible} tags in Joomla articles, and the task plugin for background translation downloads."
